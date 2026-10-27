@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CM3011P 표준거래처 일괄수정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;font-family:system-ui,sans-serif;font-size:14px}
+body{margin:0}
+.root{font-family:"Malgun Gothic","Noto Sans KR",sans-serif;font-size:12px;color:#1c2433}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#1f2d4a;color:#fff;padding:10px 16px}
+.chip{border:1px solid #8fa3c7;background:#2c3e63;color:#fff;font:inherit;padding:5px 12px;cursor:pointer;border-radius:2px;min-height:28px}
+.chip:hover{background:#3b5183}
+.chip.on{background:#c2410c;border-color:#c2410c;font-weight:700}
+.pw{background:#6a92b8;border:1px solid #4d6f93;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.pt{background:#c9cfe3;color:#1c2433;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;font-size:14px}
+.pt b{font-weight:700}
+.tb{display:flex;gap:6px;justify-content:flex-end;background:#d4dbe8;margin:6px;padding:5px 8px;border:1px solid #a9b6cb}
+.tbtn{font:inherit;border:1px solid #8a97ad;background:#eef2f8;height:26px;min-width:76px;padding:0 10px;cursor:pointer;color:#1c2433}
+.tbtn:hover{background:#dfe8f6}
+.tbtn.pri{background:#1d4ed8;color:#fff;border-color:#1d4ed8;font-weight:700}
+.tbtn.pri:disabled{background:#93a7d6;border-color:#93a7d6;cursor:default}
+.fr{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:3px 8px;color:#fff}
+.fr .fl{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.fr .fl::before{content:"";width:4px;height:4px;background:#bfe0ff;display:inline-block}
+input[type=text],select{font:inherit;box-sizing:border-box;border:1px solid #8a97ad;background:#fff;color:#1c2433;height:22px;padding:0 4px}
+input[type=text]:disabled,select:disabled{background:#d6d9df;color:#374151}
+input[type=text]:focus,select:focus,button:focus-visible{outline:2px solid #1d4ed8;outline-offset:-1px}
+.num{width:52px;text-align:right}
+.ck{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.ck input{margin:0;width:14px;height:14px}
+.qf{display:flex;gap:4px;flex-wrap:wrap;align-items:center;padding:4px 8px}
+.qbtn{font:inherit;border:1px solid #9fb6d1;background:#e8f0fa;color:#1c2433;height:24px;padding:0 9px;cursor:pointer;border-radius:12px}
+.qbtn b{font-weight:700;margin-left:3px}
+.qbtn.on{background:#1f2d4a;color:#fff;border-color:#1f2d4a}
+.grid{background:#fff;margin:0 6px;border:1px solid #8a97ad;height:330px;overflow:auto}
+table{border-collapse:collapse;width:100%;table-layout:fixed}
+th{position:sticky;top:0;background:#f3f5fa;border-right:1px solid #d5dbe6;border-bottom:1px solid #b8c2d3;font-weight:400;height:26px;padding:0 4px;text-align:center;white-space:nowrap;overflow:hidden;z-index:1}
+td{border-right:1px solid #e3e7ef;border-bottom:1px solid #e3e7ef;height:26px;padding:0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+tr.sel td{background:#e8f0ff}
+tr.chg td{background:#fff7cc}
+tr.chg.sel td{background:#fde68a}
+tr.skip td{background:#f3f4f6;color:#6b7280}
+.c{text-align:center}
+.bdg{display:inline-block;padding:1px 7px;border-radius:9px;font-size:11px;font-weight:700;border:1px solid}
+.bdg.ng{color:#b91c1c;background:#fef2f2;border-color:#fca5a5}
+.bdg.cd{color:#1d4ed8;background:#eff6ff;border-color:#93c5fd}
+.bdg.ok{color:#166534;background:#dcfce7;border-color:#86efac}
+.bdg.no{color:#6b7280;background:#f3f4f6;border-color:#d1d5db}
+.after{color:#1d4ed8;font-weight:700}
+.skiptx{color:#9a3412}
+.lock{color:#b91c1c}
+.ap{display:grid;grid-template-columns:200px 290px minmax(0,1fr) 190px;gap:0;margin:6px;background:#d4dbe8;border:1px solid #a9b6cb}
+.ap>div{padding:8px 10px;border-right:1px solid #b6c2d6}
+.ap>div:last-child{border-right:none}
+.ap h4{margin:0 0 6px 0;font-size:12px;font-weight:700;color:#1f2d4a;display:flex;align-items:center;gap:6px}
+.no{display:inline-block;width:18px;height:18px;border-radius:9px;background:#c2410c;color:#fff;text-align:center;line-height:18px;font-size:11px;font-weight:700}
+.big{font-size:22px;font-weight:700;color:#1d4ed8}
+.lnk{font:inherit;background:none;border:none;color:#1d4ed8;text-decoration:underline;cursor:pointer;padding:0;margin-right:8px}
+.seg{font:inherit;border:1px solid #6b7a96;background:#f3f6fb;color:#1c2433;height:28px;min-width:84px;cursor:pointer}
+.seg.ng.on{background:#b91c1c;color:#fff;border-color:#b91c1c}
+.seg.cd.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.seg.ok.on{background:#15803d;color:#fff;border-color:#15803d}
+.seg.dim{background:#e5e7eb;color:#6b7280;border-color:#c4c9d1}
+.er{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:4px}
+.hint{color:#4b5563;font-size:11px}
+.btn{font:inherit;border:1px solid #8a97ad;background:#f3f6fb;height:22px;padding:0 8px;cursor:pointer;color:#1c2433}
+.btn.sm{height:20px;padding:0 6px}
+.msg{margin:0 6px 6px 6px;padding:6px 10px;background:#f0fdf4;border:1px solid #86efac;color:#14532d}
+.msg.warn{background:#fff7ed;border-color:#fdba74;color:#7c2d12}
+.note{background:#fff;border:1px solid #c7d0de;padding:12px 14px;margin-bottom:10px}
+.note h3{margin:0 0 6px 0;font-size:13px;font-weight:700;color:#111827;display:flex;gap:8px;align-items:center}
+.note p{margin:0;line-height:1.6;color:#374151}
+.step{flex:none;width:22px;height:22px;border-radius:11px;background:#c2410c;color:#fff;font-weight:700;text-align:center;line-height:22px;font-size:12px}
+
+
+:root{--nav-bg:#16233d;--nav-fg:#e8edf6;--nav-dim:#9fb0cc;--nav-on:#c2410c;--page-bg:#e9edf3;color-scheme:light}
+html,body{background:var(--page-bg)}
+.topnav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--nav-bg);display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-family:"Malgun Gothic","Noto Sans KR",sans-serif;font-size:13px}
+.topnav b{color:var(--nav-fg);margin-right:10px;font-weight:700}
+.topnav .nv{color:var(--nav-dim);text-decoration:none;padding:6px 10px;border:1px solid #33476b;border-radius:3px}
+.topnav .nv:hover{color:var(--nav-fg);border-color:var(--nav-dim)}
+.topnav .nv.on{color:#fff;background:var(--nav-on);border-color:var(--nav-on);font-weight:700}
+.topnav .nv:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.topnav .note{color:var(--nav-dim);margin-left:auto;font-size:12px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--nav-bg)}
+.stage{overflow-x:auto;-webkit-overflow-scrolling:touch}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="시안 목록"><b>다미스 반품조건 시안</b><a class="nv" href="index.html">반품정보 시안</a><a class="nv on" href="cm3011p.html">CM3011P 표준거래처 일괄수정</a><a class="nv" href="cm3041p.html">CM3041P 거래처 일괄수정</a><a class="nv" href="cm2061p.html">CM2061P 상품 일괄수정</a><a class="nv" href="spec.html">개발자 설계서</a><span class="note">바로 눌러 볼 수 있는 보기 전용 · 예시 데이터</span></nav>
+<div class="stage"><div id="app"></div></div>
+<script type="text/plain" id="tpl">
+<div class="root" style="width:1920px;box-sizing:border-box;background:#f4f6fa">
+
+  <div class="bar">
+    <b>CM3011P 표준거래처 반품정보 일괄수정</b>
+    <span style="width:16px"></span>
+    <span style="color:#cfd8e6">표준거래처 등록(CM3010E) → [일괄 수정] 버튼(신규) → CM3011P</span>
+    <span style="flex-grow:1"></span>
+    <button class="chip" type="button" onClick="{{reset}}">처음으로</button>
+  </div>
+
+  <div style="display:flex;gap:24px;align-items:flex-start;padding:20px">
+    <div class="pw" style="width:1300px;flex:none">
+      <div class="pt"><b>{{w.title}}</b><span>✕</span></div>
+      <div class="tb">
+        <span class="hint" style="margin-right:auto;align-self:center">{{w.topHint}}</span>
+        <button class="tbtn" type="button">🔍 조회</button>
+        <button class="tbtn pri" type="button" onClick="{{w.save}}" disabled="{{w.saveOff}}">💾 저장{{w.saveCnt}}</button>
+        <button class="tbtn" type="button">엑셀</button>
+      </div>
+
+      <div class="fr">
+        <sc-for list="{{w.filters}}" as="f" hint-placeholder-count="4">
+          <span class="fl">{{f.label}}</span>
+          <sc-if value="{{f.isGubn}}" hint-placeholder-val="{{false}}">
+            <select value="{{w.gubn}}" onChange="{{w.onGubn}}" style="{{f.style}}">
+              <option value="all">= 전체 =</option>
+              <option value="rtnBan">반품금지 상품만</option>
+              <option value="saleOk">판매가능 상품만</option>
+              <option value="puOk">구매가능 상품만</option>
+            </select>
+          </sc-if>
+          <sc-if value="{{f.isBase}}" hint-placeholder-val="{{false}}">
+            <select value="{{w.base}}" onChange="{{w.onBase}}" style="{{f.style}}">
+              <option value="all">= 전체 =</option>
+              <option value="maker">제약사</option>
+              <option value="prior">우선처</option>
+            </select>
+          </sc-if>
+          <sc-if value="{{f.isComp}}" hint-placeholder-val="{{false}}">
+            <span style="position:relative;display:inline-block">
+              <input type="text" value="{{w.compQ}}" onChange="{{w.onCompQ}}" onFocus="{{w.onCompFocus}}" onClick="{{w.onCompClick}}" disabled="{{w.compOff}}" placeholder="5자리 코드 또는 이름" style="{{f.style}}" aria-label="제약사·우선처 찾기">
+              <sc-if value="{{w.compOpen}}" hint-placeholder-val="{{false}}">
+                <span style="position:absolute;left:0;top:23px;z-index:5;background:#fff;border:1px solid #8a97ad;box-shadow:0 2px 6px rgba(0,0,0,.2);min-width:220px;display:flex;flex-direction:column">
+                  <sc-for list="{{w.compSugg}}" as="o" hint-placeholder-count="3">
+                    <button type="button" onClick="{{o.pick}}" style="font:inherit;text-align:left;border:none;background:#fff;padding:4px 8px;cursor:pointer;color:#1c2433">{{o.t}}</button>
+                  </sc-for>
+                  <sc-if value="{{w.compNone}}" hint-placeholder-val="{{false}}"><span class="hint" style="padding:4px 8px">찾는 거래처가 없습니다</span></sc-if>
+                </span>
+              </sc-if>
+            </span>
+          </sc-if>
+          <sc-if value="{{f.isPlain}}" hint-placeholder-val="{{true}}">
+            <select style="{{f.style}}" disabled="{{f.off}}"><option>{{f.val}}</option></select>
+          </sc-if>
+        </sc-for>
+        <sc-for list="{{w.checks}}" as="k" hint-placeholder-count="1">
+          <label class="ck"><input type="checkbox" checked="{{k.on}}"> {{k.label}}</label>
+        </sc-for>
+      </div>
+
+      <div class="qf">
+        <span style="color:#fff;margin-right:4px">빠른 보기</span>
+        <sc-for list="{{w.quick}}" as="q" hint-placeholder-count="5">
+          <button class="{{q.cls}}" type="button" onClick="{{q.pick}}">{{q.label}}<b>{{q.cnt}}</b></button>
+        </sc-for>
+        <span style="flex-grow:1"></span>
+        <span style="color:#fff">찾기</span>
+        <input type="text" value="{{w.q}}" onChange="{{w.onQ}}" placeholder="코드 · 이름 바로 찾기" style="width:180px">
+      </div>
+
+      <div class="grid">
+        <table>
+          <colgroup>
+            <col style="width:32px">
+            <sc-for list="{{w.cols}}" as="h" hint-placeholder-count="6"><col style="{{h.style}}"></sc-for>
+          </colgroup>
+          <thead><tr>
+            <th><input type="checkbox" checked="{{w.allOn}}" onChange="{{w.toggleAll}}" aria-label="전체 선택"></th>
+            <sc-for list="{{w.cols}}" as="h" hint-placeholder-count="6"><th>{{h.label}}</th></sc-for>
+          </tr></thead>
+          <tbody>
+            <sc-for list="{{w.rows}}" as="r" hint-placeholder-count="8">
+              <tr class="{{r.cls}}">
+                <td class="c"><input type="checkbox" checked="{{r.on}}" onChange="{{r.toggle}}" aria-label="선택"></td>
+                <sc-for list="{{r.cells}}" as="x" hint-placeholder-count="6">
+                  <td class="{{x.td}}" title="{{x.t}}"><span class="{{x.cls}}">{{x.t}}</span></td>
+                </sc-for>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ap">
+        <div>
+          <h4><span class="no">1</span>고르기</h4>
+          <div>선택 <span class="big">{{w.selCnt}}</span> 건 <span class="hint">/ 조회 {{w.viewCnt}}건</span></div>
+          <div style="margin-top:6px">
+            <button class="lnk" type="button" onClick="{{w.selView}}">보이는 것 모두 선택</button>
+            <button class="lnk" type="button" onClick="{{w.selNone}}">선택 해제</button>
+          </div>
+          <div class="hint" style="margin-top:6px">빠른 보기·찾기로 좁힌 뒤 ‘보이는 것 모두 선택’을 누르면 편합니다.</div>
+        </div>
+        <div>
+          <h4><span class="no">2</span>바꿀 항목</h4>
+          <div class="hint" style="margin-bottom:6px">▼를 눌러 바꿀 항목을 고르세요.</div>
+          <sc-if value="{{w.isStdTab}}" hint-placeholder-val="{{true}}">
+            <select value="{{w.item}}" onChange="{{w.onItem}}" style="width:100%;height:26px">
+              <option value="type">반품구분</option>
+              <option value="bands">유효기한별 공제</option>
+              <option value="st">상태별 공제·불가</option>
+              <option value="lim">반품한도</option>
+            </select>
+          </sc-if>
+          <sc-if value="{{w.isCustTab}}" hint-placeholder-val="{{false}}">
+            <select value="{{w.item}}" onChange="{{w.onItem}}" style="width:100%;height:26px">
+              <option value="inherit">표준거래처 반품조건 따름으로 되돌리기</option>
+              <option value="type">반품구분 (직접 입력)</option>
+              <option value="bands">유효기한별 공제 (직접 입력)</option>
+              <option value="st">상태별 공제·불가 (직접 입력)</option>
+              <option value="lim">반품한도 (직접 입력)</option>
+            </select>
+          </sc-if>
+          <sc-if value="{{w.isProdTab}}" hint-placeholder-val="{{false}}">
+            <select value="{{w.topItem}}" onChange="{{w.onTopItem}}" style="width:100%;height:26px">
+              <option value="rtnDate">반품금지일자</option>
+              <option value="saleDate">판매금지일자</option>
+              <option value="puDate">구매금지일자</option>
+              <option value="dc">매입할인율(%)</option>
+              <option value="rtn">반품정보 (기존 ‘반품조건설명’ 자리)</option>
+            </select>
+            <sc-if value="{{w.isRtnGroup}}" hint-placeholder-val="{{false}}">
+              <div class="hint" style="margin:8px 0 4px 0;font-weight:700;color:#1f2d4a">반품정보에서 수정할 내용</div>
+              <select value="{{w.item}}" onChange="{{w.onItem}}" style="width:100%;height:26px">
+                <option value="inherit">우선처 반품조건 따름으로 되돌리기</option>
+                <option value="type">반품구분 (직접 입력)</option>
+                <option value="bands">유효기한별 공제 (직접 입력)</option>
+                <option value="st">상태별 공제·불가 (직접 입력)</option>
+                <option value="lim">반품한도 (직접 입력)</option>
+              </select>
+            </sc-if>
+          </sc-if>
+        </div>
+        <div>
+          <h4><span class="no">3</span>바꿀 값 <span class="hint" style="font-weight:400">— {{w.itemHint}}</span></h4>
+
+          <sc-if value="{{e.isType}}" hint-placeholder-val="{{true}}">
+            <div class="er">
+              <sc-for list="{{e.segs}}" as="s" hint-placeholder-count="3">
+                <button class="{{s.cls}}" type="button" onClick="{{s.pick}}">{{s.label}}</button>
+              </sc-for>
+            </div>
+            <div class="hint">반품불가·반품가능으로 바꾸면 기존 조건은 지워집니다. 조건부반품은 기존 조건을 그대로 둡니다.</div>
+          </sc-if>
+
+          <sc-if value="{{e.isBands}}" hint-placeholder-val="{{false}}">
+            <div class="er hint"><span style="width:142px">시작</span><span style="width:12px"></span><span style="width:142px">끝</span><span>공제율</span></div>
+            <sc-for list="{{e.bands}}" as="b" hint-placeholder-count="2">
+              <div class="er">
+                <select value="{{b.fs}}" onChange="{{b.onFs}}" style="width:76px"><option value="제한없음">제한없음</option><option value="임박">임박</option><option value="경과">경과</option></select>
+                <span style="display:inline-flex;gap:3px;align-items:center;width:62px"><sc-if value="{{b.fmShow}}" hint-placeholder-val="{{true}}"><input type="text" class="num" value="{{b.fm}}" onChange="{{b.onFm}}" style="width:34px">개월</sc-if></span>
+                <span>~</span>
+                <select value="{{b.ts}}" onChange="{{b.onTs}}" style="width:76px"><option value="임박">임박</option><option value="경과">경과</option><option value="제한없음">제한없음</option></select>
+                <span style="display:inline-flex;gap:3px;align-items:center;width:62px"><sc-if value="{{b.tmShow}}" hint-placeholder-val="{{true}}"><input type="text" class="num" value="{{b.tm}}" onChange="{{b.onTm}}" style="width:34px">개월</sc-if></span>
+                <input type="text" class="num" value="{{b.rate}}" onChange="{{b.onRate}}" placeholder="없음" style="width:44px">%
+                <button class="btn sm" type="button" onClick="{{b.del}}">−</button>
+              </div>
+            </sc-for>
+            <div class="er"><button class="btn sm" type="button" onClick="{{e.addBand}}">+ 구간 추가</button><span class="hint">※ 유효기한 당일 = 경과 0개월 · 표에 없는 기간은 반품불가 · 기존 유효기한별 공제를 이 값으로 바꿉니다</span></div>
+          </sc-if>
+
+          <sc-if value="{{e.isSt}}" hint-placeholder-val="{{false}}">
+            <sc-for list="{{e.st}}" as="z" hint-placeholder-count="3">
+              <div class="er">
+                <span style="width:72px;font-weight:700">{{z.name}}</span>
+                <input type="text" class="num" value="{{z.rate}}" onChange="{{z.onRate}}" disabled="{{z.ng}}" placeholder="기본" style="width:48px">%
+                <label class="ck" style="margin-left:6px"><input type="checkbox" checked="{{z.ng}}" onChange="{{z.onNg}}"> 불가</label>
+              </div>
+            </sc-for>
+            <div class="hint">공제율 빈칸 = 유효기한별 공제 그대로. 기존 상태별 값을 이 값으로 바꿉니다.</div>
+          </sc-if>
+
+          <sc-if value="{{e.isLim}}" hint-placeholder-val="{{false}}">
+            <div class="er">
+              <label class="ck"><input type="checkbox" checked="{{e.limNone}}" onChange="{{e.onLimNone}}"> 반품한도 없앰</label>
+            </div>
+            <div class="er">
+              <select value="{{e.limBase}}" onChange="{{e.onLimBase}}" disabled="{{e.limNone}}" style="width:120px"><option value="연간 매입액">연간 매입액</option><option value="분기 매입액">분기 매입액</option><option value="담당자별 매출액">담당자별 매출액</option></select>
+              의 <input type="text" class="num" value="{{e.limRate}}" onChange="{{e.onLimRate}}" disabled="{{e.limNone}}" style="width:48px"> % 까지
+            </div>
+          </sc-if>
+
+          <sc-if value="{{e.isInherit}}" hint-placeholder-val="{{false}}">
+            <div class="er">선택한 행을 <b style="margin:0 3px">{{e.inheritLabel}}</b>으로 되돌립니다. 직접 입력했던 값은 지워집니다.</div>
+          </sc-if>
+
+          <sc-if value="{{e.isDate}}" hint-placeholder-val="{{false}}">
+            <div class="er">
+              <select value="{{e.date}}" onChange="{{e.onDate}}" style="width:110px"><option value="2026-12-31">2026-12-31</option><option value="2027-06-30">2027-06-30</option><option value="2999-12-31">2999-12-31</option></select>
+              <span class="hint">2999-12-31 = 금지 없음</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{e.isDc}}" hint-placeholder-val="{{false}}">
+            <div class="er">
+              <label class="ck"><input type="checkbox" checked="{{e.dcClear}}" onChange="{{e.onDcClear}}"> 매입할인율 지우기</label>
+            </div>
+            <div class="er">
+              <input type="text" class="num" value="{{e.dc}}" onChange="{{e.onDc}}" disabled="{{e.dcClear}}" style="width:60px"> %
+              <span class="hint">실제 적용 대상은 기존 CM2061P 저장 규칙(전문·보험 구분 조건) 그대로입니다.</span>
+            </div>
+          </sc-if>
+        </div>
+        <div>
+          <h4><span class="no">4</span>적용</h4>
+          <button class="tbtn pri" type="button" style="width:100%;height:34px" onClick="{{w.apply}}" disabled="{{w.applyOff}}">선택 {{w.selCnt}}건에 미리 적용</button>
+          <div class="hint" style="margin:6px 0">노란 줄 = 바뀔 행. 항목을 바꿔 가며 여러 번 미리 적용할 수 있고, 위의 <b>저장</b>을 눌러야 반영됩니다.</div>
+          <button class="tbtn" type="button" style="width:100%" onClick="{{w.undo}}" disabled="{{w.undoOff}}">미리 적용 취소</button>
+        </div>
+      </div>
+
+      <sc-if value="{{w.hasMsg}}" hint-placeholder-val="{{false}}">
+        <div class="{{w.msgCls}}">{{w.msg}}</div>
+      </sc-if>
+      <div style="display:flex;justify-content:flex-end;padding:0 6px 6px 6px"><button class="tbtn" type="button">닫기</button></div>
+    </div>
+
+    <div style="flex-grow:1;min-width:0">
+      <div class="note"><h3><span class="step">★</span>어디에 붙나요</h3><p>{{w.where}}</p></div>
+      <div class="note"><h3><span class="step">1</span>바꿀 항목만 골라서 바꿉니다</h3><p>예전 일괄수정처럼 ‘항목 1개 + 값 1개’를 고르되, 반품정보는 <b>반품한도만</b>처럼 일부만 바꾸고 나머지 조건은 그대로 둡니다.</p></div>
+      <div class="note"><h3><span class="step">2</span>미리 적용 → 확인 → 저장</h3><p>‘미리 적용’을 누르면 바뀔 행이 노란색, ‘변경 후’ 칸에 바뀐 내용이 파란 글씨로 보입니다. 저장 전까지는 언제든 ‘미리 적용 취소’로 되돌릴 수 있습니다.</p></div>
+      <div class="note"><h3><span class="step">3</span>빠른 보기 · 찾기</h3><p>반품구분별 건수가 버튼에 바로 보이고, 누르면 그 행만 남습니다. 찾기 칸은 코드·이름을 입력하는 즉시 좁혀집니다. 좁힌 뒤 ‘보이는 것 모두 선택’.</p></div>
+      <div class="note"><h3><span class="step">4</span>바꿀 수 없는 행은 건너뛰고 이유 표시</h3><p>표준거래처 반품불가인 제약사는 거래처 직접 입력 불가, 그 상품의 판매반품금지(全社)는 표준상품 일괄수정(CM2011P)에서 해제 불가 — 이런 행은 회색으로 표시하고 ‘건너뜀(이유)’를 보여 줍니다.</p></div>
+      <div class="note"><h3><span class="step">5</span>기존 화면은 그대로</h3><p>창 모양·조회·저장·엑셀 버튼·조회 조건과 CM2061P의 기존 일괄수정 항목(반품금지일자·판매금지일자·구매금지일자·매입할인율)은 그대로 두고, 아래 일괄수정 영역만 ① 고르기 ② 바꿀 항목 ③ 바꿀 값 ④ 적용 순서로 정리했습니다.</p></div>
+    </div>
+  </div>
+</div>
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="assets/app.js"></script>
+<script>
+
+let UID = 100;
+const band = p => Object.assign({ id: ++UID, fs: '임박', fm: '3', ts: '경과', tm: '10', rate: '' }, p || {});
+const ST = [['dmg', '파손품'], ['split', '소분·낱개']];
+const stEmpty = () => ({ dmg: { rate: '', ng: false }, split: { rate: '', ng: false }, open: { rate: '', ng: false } });
+const D = p => Object.assign({ none: false, type: '', bands: [], st: stEmpty(), lim: null, memo: '' }, p || {});
+const NONE = () => D({ none: true });
+const clone = d => JSON.parse(JSON.stringify(d));
+const side = (s, m) => s === '제한없음' ? '제한없음' : s + ' ' + (m === '' ? '?' : m) + '개월';
+const bandTxt = b => (b.fs === '제한없음' && b.ts === '제한없음' ? '상관없이' : side(b.fs, b.fm) + ' ~ ' + side(b.ts, b.tm)) + ' ' + (b.rate !== '' && b.rate !== '0' ? b.rate + '% 공제' : '공제 없음');
+function summary(d) {
+  if (d.none) return '— (미입력)';
+  const p = [];
+  if (!d.type) p.push('반품가능');
+  else if (d.type === 'ng') p.push('반품불가');
+  else {
+    p.push('조건부반품');
+    if (d.bands.length) p.push('유효기한 ' + (d.bands.every(b => b.fs === '경과') ? '경과품만: ' : '') + d.bands.map(bandTxt).join(', ') + (d.bands.some(b => b.fs === '제한없음' && b.ts === '제한없음') ? '' : ' (그 외 기간 반품불가)'));
+    const x = ST.filter(s => d.st[s[0]].ng || d.st[s[0]].rate !== '').map(s => s[1] + (d.st[s[0]].ng ? ' 불가' : ' ' + d.st[s[0]].rate + '% 공제'));
+    if (x.length) p.push(x.join(', '));
+    if (d.lim) p.push(d.lim.base + '의 ' + d.lim.rate + '%까지');
+    if (!d.bands.length && !x.length && !d.lim) p.push('(조건 미입력)');
+  }
+  if (d.memo) p.push('메모: ' + d.memo);
+  return p.join(' / ');
+}
+const typeOf = d => d.none ? 'none' : (d.type === 'ng' ? 'ng' : d.type === 'cond' ? 'cd' : 'ok');
+const TYPE_NM = { ng: '반품불가', cd: '조건부반품', ok: '반품가능', none: '미입력' };
+const badge = d => ({ t: TYPE_NM[typeOf(d)], cls: 'bdg ' + (typeOf(d) === 'none' ? 'no' : typeOf(d)), td: 'c' });
+
+// ---- 예시 데이터 ----
+const STD0 = () => [
+  { id: '10299', name: '한국노바티스(주)', d: D({ type: 'cond', bands: [band({ fs: '임박', fm: '6', ts: '경과', tm: '12', rate: '10' })], st: { dmg: { rate: '', ng: true }, split: { rate: '', ng: false }, open: { rate: '', ng: true } } }) },
+  { id: '10234', name: '예시제약(주)', d: D({ type: 'cond', bands: [band({ rate: '20' }), band({ fs: '경과', fm: '10', ts: '제한없음', tm: '', rate: '30' })] }) },
+  { id: '10301', name: '가나제약(주)', d: D({ type: 'ng' }) },
+  { id: '10422', name: '다라약품(주)', d: D({ type: 'cond', bands: [band({ fs: '제한없음', fm: '', ts: '제한없음', tm: '', rate: '5' })], st: { dmg: { rate: '10', ng: false }, split: { rate: '', ng: true }, open: { rate: '', ng: false } } }) },
+  { id: '10555', name: '마바제약(주)', d: D({ type: '', memo: '반품 전 영업담당 확인 요망' }) },
+  { id: '10610', name: '사아제약(주)', d: D({ type: 'cond', bands: [band({ fs: '경과', fm: '0', ts: '제한없음', tm: '', rate: '50' })] }) },
+  { id: '10777', name: '자차약품(주)', d: NONE() },
+  { id: '10888', name: '카타제약(주)', d: D({ type: 'cond', bands: [band({ fs: '제한없음', fm: '', ts: '경과', tm: '30' })], lim: { base: '연간 매입액', rate: '0.5' } }) },
+  { id: '10999', name: '파하제약(주)', d: D({ type: 'ng' }) },
+  { id: '11020', name: '거너제약(주)', d: NONE() },
+  { id: '11135', name: '더러바이오(주)', d: D({ type: 'cond', bands: [band({ rate: '20' }), band({ fs: '경과', fm: '10', ts: '제한없음', tm: '', rate: '30' })] }) }
+];
+const CUST0 = () => STD0().map(s => ({ id: s.id, name: s.name, mode: s.id === '10422' ? 'custom' : 'inherit', d: s.id === '10422' ? D({ type: 'cond', bands: [band({ fs: '제한없음', fm: '', ts: '제한없음', tm: '', rate: '7' })] }) : NONE() }));
+const PROD0 = () => [
+  ['40810', '10299', '가브스메트정50/1000mg', '60정(PTP)', '전문', '보험'],
+  ['48839', '10299', '가브스메트정50/500mg', '60정(PTP)', '전문', '보험'],
+  ['36476', '10299', '가브스정50mg', '28정(PTP)', '전문', '보험'],
+  ['17690', '10299', '나보반주사5mg', '5ml/1앰플', '전문', ''],
+  ['40201', '10299', '니코틴엘껌2mg-민트향', '24정', '일반', ''],
+  ['10099', '10299', '니코틴엘TTS10-동화', '7매', '일반', ''],
+  ['A0105', '10301', '가나캡슐', '100C', '전문', '보험'],
+  ['A0106', '10301', '가나시럽', '100mL', '일반', ''],
+  ['A0533', '10888', '카타정', '500T', '전문', '보험']
+].map(x => ({ id: x[0], prior: x[1], name: x[2], spec: x[3], etc: x[4], insu: x[5], ban: x[1] === '10301' && x[0] === 'A0105', rtnDate: x[0] === '40201' ? '2023-06-30' : '2999-12-31', saleDate: '2999-12-31', puDate: '2999-12-31', dc: x[4] === '일반' ? '3.00' : '', mode: 'inherit', d: NONE() }));
+
+const ED0 = () => ({ dc: '', dcClear: false, type: 'cond', bands: [band({ rate: '20' })], st: stEmpty(), limNone: false, limBase: '연간 매입액', limRate: '0.5', memo: '', copyFrom: '', ban: true, date: '2026-12-31', saleable: true });
+const RTN_ITEMS = { inherit: true, type: true, bands: true, st: true, lim: true };
+const W0 = (rows, item) => ({ rows: rows, pend: {}, skip: {}, sel: {}, quick: 'all', q: '', item: item, ed: ED0(), msg: '', msgCls: 'msg' });
+
+const ITEM_HINT = { puDate: '기존 항목 (구매금지일자)', dc: '기존 항목 (매입할인율)', type: '반품불가 · 조건부반품 · 반품가능', bands: '선택한 행의 유효기한별 공제를 이 표로 바꿈', st: '파손품 · 소분·낱개', lim: '반품한도만 바꿈 (다른 조건 그대로)', memo: '메모만 바꿈', copy: '원본의 반품조건 전체를 그대로 복사', inherit: '직접 입력을 지우고 윗단계 조건을 따름', ban: '고객 → 우리 반품 차단', rtnDate: '기존 항목 (반품금지일자)', saleDate: '기존 항목 (판매금지일자)' };
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = this.fresh('std');
+  }
+  fresh(tab) {
+    return { tab: tab, std: W0(STD0(), 'lim'), cust: W0(CUST0(), 'inherit'), prod: W0(PROD0(), 'type') };
+  }
+  w(patch) { const t = this.state.tab; this.setState({ [t]: Object.assign({}, this.state[t], patch) }); }
+  ed(patch) { const t = this.state.tab; this.w({ ed: Object.assign({}, this.state[t].ed, patch) }); }
+  stdOf(id) { const s = this.state.std.rows.find(x => x.id === id); return s ? (this.state.std.pend[id] ? this.state.std.pend[id].d : s.d) : NONE(); }
+  // 거래처 실제 값 (표준 반품불가면 항상 표준)
+  custEff(id, row) {
+    const std = this.stdOf(id);
+    if (std.type === 'ng' || !row || row.mode === 'inherit') return std;
+    return row.d;
+  }
+  custRow(id) { const c = this.state.cust.rows.find(x => x.id === id); return c ? (this.state.cust.pend[id] || c) : null; }
+  prodEff(row) { return row.mode === 'inherit' ? this.custEff(row.prior, this.custRow(row.prior)) : row.d; }
+
+  // 선택한 행 1개에 바꿀 값을 적용한 결과 (건너뛰면 { skip: 이유 })
+  applyOne(tab, row, item, ed, wst) {
+    const nr = clone(row);
+    const isStdNg = tab !== 'std' && this.stdOf(tab === 'cust' ? row.id : row.prior).type === 'ng';
+    const base = tab === 'std' ? row.d : (tab === 'cust' ? this.custEff(row.id, row) : this.prodEff(row));
+    const edit = fn => { const d = clone(base); d.none = false; fn(d); nr.d = d; if (tab !== 'std') nr.mode = 'custom'; return nr; };
+    if (tab === 'cust' && isStdNg && item !== 'inherit') return { skip: '표준거래처 반품불가 (직접 입력 불가)' };
+    if (item === 'inherit') { if (row.mode === 'inherit') return { skip: '이미 따름' }; nr.mode = 'inherit'; nr.d = NONE(); return nr; }
+    if (item === 'rtnDate') { nr.rtnDate = ed.date; return nr; }
+    if (item === 'saleDate') { nr.saleDate = ed.date; return nr; }
+    if (item === 'puDate') { nr.puDate = ed.date; return nr; }
+    if (item === 'dc') { nr.dc = ed.dcClear ? '' : ed.dc; return nr; }
+    if (item === 'copy') {
+      const src = wst.rows.find(x => x.id === ed.copyFrom);
+      if (!src) return { skip: '원본 없음' };
+      if (src.id === row.id) return { skip: '원본과 같은 행' };
+      const sd = tab === 'std' ? src.d : (tab === 'cust' ? this.custEff(src.id, src) : this.prodEff(src));
+      nr.d = clone(sd); if (tab !== 'std') nr.mode = 'custom'; return nr;
+    }
+    if (item === 'type') return edit(d => { d.type = ed.type === 'ok' ? '' : ed.type; if (d.type !== 'cond') { d.bands = []; d.st = stEmpty(); d.lim = null; } });
+    if (item === 'bands') return edit(d => { d.type = 'cond'; d.bands = clone(ed.bands); });
+    if (item === 'st') return edit(d => { d.type = 'cond'; d.st = clone(ed.st); });
+    if (item === 'lim') return edit(d => { if (d.type !== 'cond') d.type = 'cond'; d.lim = ed.limNone ? null : { base: ed.limBase, rate: ed.limRate }; });
+    if (item === 'memo') return edit(d => { d.memo = ed.memo; });
+    return { skip: '-' };
+  }
+
+  renderVals() {
+    const s = this.state, tab = s.tab, W = s[tab], E = W.ed;
+    const cur = r => W.pend[r.id] || r;
+    // ---- 행 표시용 값 ----
+    const effOf = r => tab === 'std' ? cur(r).d : tab === 'cust' ? this.custEff(r.id, cur(r)) : this.prodEff(cur(r));
+    const orig = r => tab === 'std' ? r.d : tab === 'cust' ? this.custEff(r.id, r) : this.prodEff(r);
+    const qmatch = r => !W.q || (r.id + ' ' + r.name).indexOf(W.q) >= 0;
+    const tOf = r => typeOf(orig(r));
+    const quickDefs = [['all', '전체'], ['ng', '반품불가'], ['cd', '조건부반품'], ['ok', '반품가능'], ['none', '미입력']];
+    if (tab !== 'std') quickDefs.push(['custom', '직접 입력']);
+    if (tab === 'prod') quickDefs.push(['mis', '불일치 (제약사 반품불가 + 판매반품금지 해제)']);
+    const qtest = (k, r) => k === 'all' || (k === 'custom' ? r.mode === 'custom' : k === 'mis' ? (tOf(r) === 'ng' && !r.ban) : tOf(r) === k);
+    // CM2061P 조회구분 (기존과 같음) : 금지일자가 오늘 이전이면 금지된 것
+    const TODAY = '2026-10-22';
+    const gubnOk = r => { const g = W.gubn || 'saleOk'; if (tab !== 'prod' || g === 'all') return true;
+      if (g === 'rtnBan') return r.rtnDate <= TODAY; if (g === 'saleOk') return r.saleDate > TODAY; return r.puDate > TODAY; };
+    // CM2061P 상품기준 (= 전체 = / 제약사 / 우선처) + 거래처 칸 : 5자리 코드 직접 입력 또는 이름으로 찾기
+    const compCd = W.compCd === undefined ? '10299' : W.compCd;
+    const baseOk = r => tab !== 'prod' || (W.base || 'prior') === 'all' || !compCd || ((W.base || 'prior') === 'maker' ? (r.maker || r.prior) : r.prior) === compCd;
+    const cq = (W.compQ || '').replace(/^\d{5}\)\s*/, '').trim();
+    const compSugg = this.state.std.rows.filter(x => !cq || x.id.indexOf(cq) === 0 || x.name.indexOf(cq) >= 0).slice(0, 8)
+      .map(x => ({ t: x.id + ') ' + x.name.replace('(주)', ''), pick: () => this.w({ compQ: x.id + ') ' + x.name.replace('(주)', ''), compCd: x.id, compOpen: false }) }));
+    const visible = W.rows.filter(r => baseOk(r) && gubnOk(r) && qmatch(r) && qtest(W.quick, r));
+    const selIds = W.rows.filter(r => W.sel[r.id]).map(r => r.id);
+    const pendCnt = Object.keys(W.pend).length;
+
+    const modeTxt = r => { if (tab === 'cust' && this.stdOf(r.id).type === 'ng') return '따름 🔒'; return r.mode === 'inherit' ? (tab === 'cust' ? '표준 따름' : '우선처 따름') : '직접 입력'; };
+    let cols, cellsOf;
+    if (tab === 'std') {
+      cols = [['표준거래처코드', 100], ['제약사명', 130], ['반품구분', 86], ['반품조건 (현재)', 420], ['변경 후', 0]];
+      cellsOf = r => [{ t: r.id, td: 'c' }, { t: r.name }, badge(r.d), { t: summary(r.d) }];
+    } else if (tab === 'cust') {
+      cols = [['거래처코드', 90], ['거래처명', 120], ['적용방식', 90], ['반품구분', 86], ['반품조건 (현재)', 380], ['변경 후', 0]];
+      cellsOf = r => [{ t: r.id, td: 'c' }, { t: r.name }, { t: modeTxt(r), td: 'c', cls: this.stdOf(r.id).type === 'ng' ? 'lock' : '' }, badge(orig(r)), { t: summary(orig(r)) }];
+    } else {
+      cols = [['코드', 52], ['제약사', 96], ['상품명', 140], ['규격', 74], ['전문', 36], ['보험', 36], ['반품금지일자', 84], ['매입할인율', 64], ['판매반품금지(全社·보기)', 120], ['적용방식', 72], ['반품구분', 76], ['반품조건 (현재)', 200], ['변경 후', 0]];
+      cellsOf = r => {
+        const lockBan = this.stdOf(r.prior).type === 'ng';
+        const pn = (this.state.std.rows.find(x => x.id === r.prior) || {}).name || '';
+        return [{ t: r.id, td: 'c' }, { t: pn.replace('(주)', '') }, { t: r.name }, { t: r.spec }, { t: r.etc, td: 'c' }, { t: r.insu, td: 'c' }, { t: r.rtnDate, td: 'c' }, { t: r.dc, td: 'c' },
+          { t: (r.ban ? '☑ 체크' : '☐ 해제') + (lockBan ? ' 🔒' : ''), td: 'c', cls: lockBan ? 'lock' : (tOf(r) === 'ng' && !r.ban ? 'skiptx' : '') },
+          { t: modeTxt(r), td: 'c' }, badge(orig(r)), { t: summary(orig(r)) }];
+      };
+    }
+    const afterTxt = r => {
+      if (W.skip[r.id]) return { t: '건너뜀 · ' + W.skip[r.id], cls: 'skiptx' };
+      const p = W.pend[r.id];
+      if (!p) return { t: '' };
+      const x = [];
+      const effP = tab === 'std' ? p.d : tab === 'cust' ? this.custEff(r.id, p) : this.prodEff(p);
+      if (p.mode !== r.mode && p.mode === 'inherit') x.push('[따름] ' + summary(effP));
+      else if (summary(effP) !== summary(orig(r)) || p.mode !== r.mode) x.push(summary(effP));
+      if (tab === 'prod') {
+        if (p.rtnDate !== r.rtnDate) x.push('반품금지일자 → ' + p.rtnDate);
+        if (p.saleDate !== r.saleDate) x.push('판매금지일자 → ' + p.saleDate);
+        if (p.puDate !== r.puDate) x.push('구매금지일자 → ' + p.puDate);
+        if (p.dc !== r.dc) x.push('매입할인율 → ' + (p.dc === '' ? '지움' : p.dc + '%'));
+      }
+      return { t: x.length ? x.join(' · ') : '(변경 없음)', cls: 'after' };
+    };
+    const rows = visible.map(r => {
+      const on = !!W.sel[r.id];
+      const cls = [on ? 'sel' : '', W.pend[r.id] ? 'chg' : '', W.skip[r.id] ? 'skip' : ''].join(' ');
+      const cells = cellsOf(r).concat([afterTxt(r)]).map(c => ({ t: c.t, cls: c.cls || '', td: c.td || '' }));
+      return { on: on, cls: cls, cells: cells, toggle: () => this.w({ sel: Object.assign({}, W.sel, { [r.id]: !on }) }) };
+    });
+
+    // ---- 바꿀 값 편집기 ----
+    const item = W.item;
+    const seg3 = [['ng', '반품불가', 'ng'], ['cond', '조건부반품', 'cd'], ['ok', '반품가능', 'ok']].map(x => ({ label: x[1], cls: 'seg ' + x[2] + (E.type === x[0] ? ' on' : ' dim'), pick: () => this.ed({ type: x[0] }) }));
+    const NO_MM = { '제한없음': true };
+    const ub = (id, patch) => this.ed({ bands: this.state[tab].ed.bands.map(b => b.id === id ? Object.assign({}, b, patch) : b) });
+    const copySrc = W.rows.find(x => x.id === E.copyFrom);
+    const copyEff = copySrc ? (tab === 'std' ? copySrc.d : tab === 'cust' ? this.custEff(copySrc.id, copySrc) : this.prodEff(copySrc)) : null;
+    const e = {
+      isType: item === 'type', isBands: item === 'bands', isSt: item === 'st', isLim: item === 'lim', isMemo: item === 'memo', isCopy: item === 'copy',
+      isInherit: item === 'inherit', isDate: item === 'rtnDate' || item === 'saleDate' || item === 'puDate', isDc: item === 'dc',
+      dc: E.dc, onDc: ev => this.ed({ dc: ev.target.value }), dcClear: E.dcClear, onDcClear: ev => this.ed({ dcClear: ev.target.checked }),
+      segs: seg3,
+      bands: E.bands.map(b => ({ fs: b.fs, fm: b.fm, ts: b.ts, tm: b.tm, rate: b.rate, fmShow: !NO_MM[b.fs], tmShow: !NO_MM[b.ts],
+        onFs: ev => ub(b.id, { fs: ev.target.value }), onFm: ev => ub(b.id, { fm: ev.target.value }), onTs: ev => ub(b.id, { ts: ev.target.value }),
+        onTm: ev => ub(b.id, { tm: ev.target.value }), onRate: ev => ub(b.id, { rate: ev.target.value }),
+        del: () => this.ed({ bands: this.state[tab].ed.bands.filter(x => x.id !== b.id) }) })),
+      addBand: () => { const bs = this.state[tab].ed.bands; const last = bs[bs.length - 1]; this.ed({ bands: bs.concat([last && last.ts !== '제한없음' ? band({ fs: last.ts, fm: last.tm, ts: '제한없음', tm: '' }) : band()]) }); },
+      st: ST.map(x => ({ name: x[1], rate: E.st[x[0]].ng ? '' : E.st[x[0]].rate, ng: E.st[x[0]].ng,
+        onRate: ev => this.ed({ st: Object.assign({}, this.state[tab].ed.st, { [x[0]]: Object.assign({}, this.state[tab].ed.st[x[0]], { rate: ev.target.value }) }) }),
+        onNg: ev => this.ed({ st: Object.assign({}, this.state[tab].ed.st, { [x[0]]: Object.assign({}, this.state[tab].ed.st[x[0]], { ng: ev.target.checked }) }) }) })),
+      limNone: E.limNone, onLimNone: ev => this.ed({ limNone: ev.target.checked }), limBase: E.limBase, onLimBase: ev => this.ed({ limBase: ev.target.value }),
+      limRate: E.limRate, onLimRate: ev => this.ed({ limRate: ev.target.value }),
+      memo: E.memo, onMemo: ev => this.ed({ memo: ev.target.value }),
+      copyFrom: E.copyFrom, onCopyFrom: ev => this.ed({ copyFrom: ev.target.value }),
+      copyOpts: [{ v: '', t: '— 원본을 고르세요 —' }].concat(W.rows.map(r => ({ v: r.id, t: r.id + ' ' + r.name }))),
+      copySum: copyEff ? summary(copyEff) : '(아직 고르지 않음)',
+      inheritLabel: tab === 'cust' ? '표준거래처 반품조건 따름' : '우선처 반품조건 따름',
+      date: E.date, onDate: ev => this.ed({ date: ev.target.value })
+    };
+
+    // ---- 적용 / 저장 ----
+    const apply = () => {
+      // 미리 적용은 누적됩니다 (반품한도 바꾸고 → 메모 바꾸고 → 한 번에 저장)
+      const st = this.state[tab]; const pend = Object.assign({}, st.pend), skip = {}; let ok = 0, sk = 0;
+      st.rows.forEach(r => {
+        if (!st.sel[r.id]) return;
+        const res = this.applyOne(tab, st.pend[r.id] || r, st.item, st.ed, st);
+        if (res.skip) { skip[r.id] = res.skip; sk++; } else { pend[r.id] = res; ok++; }
+      });
+      let extra = '';
+      if (tab === 'std' && (st.item === 'type' && st.ed.type === 'ng' || st.item === 'copy')) {
+        const ngIds = Object.keys(pend).filter(id => pend[id].d.type === 'ng' && st.sel[id]);
+        const n = this.state.prod.rows.filter(p => ngIds.indexOf(p.prior) >= 0 && !p.ban).length;
+        if (ngIds.length) extra = ' · 저장하면 이 제약사들이 우선처인 상품의 판매반품금지(全社)를 자동 체크합니다' + (n ? ' (예시 데이터 기준 ' + n + '건)' : '');
+      }
+      this.w({ pend: pend, skip: skip, msg: '선택 ' + (ok + sk) + '건 중 ' + ok + '건 미리 적용' + (sk ? ' · ' + sk + '건 건너뜀 (회색 줄 참고)' : '') + extra + ' — 확인 후 저장을 누르세요.', msgCls: sk ? 'msg warn' : 'msg' });
+    };
+    const save = () => {
+      const st = this.state[tab]; const ids = Object.keys(st.pend); if (!ids.length) return;
+      let rowsN = st.rows.map(r => st.pend[r.id] ? st.pend[r.id] : r);
+      const patch = { [tab]: Object.assign({}, st, { rows: rowsN, pend: {}, skip: {}, sel: {}, msg: ids.length + '건 저장했습니다. (변경 이력에 남고, 요약 문구도 다시 만들어집니다)', msgCls: 'msg' }) };
+      if (tab === 'std') {
+        const ngIds = ids.filter(id => st.pend[id].d.type === 'ng');
+        const P = this.state.prod; let n = 0;
+        const prows = P.rows.map(p => { if (ngIds.indexOf(p.prior) >= 0 && !p.ban) { n++; return Object.assign({}, p, { ban: true }); } return p; });
+        patch.prod = Object.assign({}, P, { rows: prows });
+        if (n) patch[tab].msg += ' · 상품 ' + n + '건의 판매반품금지(全社)를 자동 체크했습니다.';
+      }
+      this.setState(patch);
+    };
+
+    const where = tab === 'std' ? '표준거래처 등록(CM3010E) 화면 위쪽에 ‘일괄수정’ 버튼을 새로 두고, 누르면 이 창(CM3011P, 신규)이 열립니다. 기획실이 여러 제약사의 반품조건을 한 번에 바꿉니다.'
+      : tab === 'cust' ? '거래처 등록(CM3040E) 화면 위쪽에 ‘일괄수정’ 버튼을 새로 두고, 누르면 이 창(CM3041P, 신규)이 열립니다. 각사가 우리 회사 거래처(우선처)의 반품조건을 한 번에 바꾸거나 표준 따름으로 되돌립니다.'
+      : '상품 등록(CM2060E)의 기존 ‘일괄 수 정’ 버튼 → 상품 정보 일괄수정(CM2061P). 기존 일괄수정할 5개(반품금지일자·판매금지일자·구매금지일자·매입할인율·반품조건설명) 중 앞의 4개는 그대로 두고, 자유 입력이던 ‘반품조건설명’ 자리를 ‘반품정보 (신규)’ 묶음으로 바꿉니다. 판매반품금지(全社)는 표준상품 일괄수정(CM2011P)에 이미 있어서 여기서는 보기만 합니다.';
+    const filters = tab === 'std' ? [['제약사', '', 'width:180px;background:#fff59d'], ['업체유형', '제약사', 'width:110px'], ['조회구분', '= 전체 =', 'width:110px']]
+      : tab === 'cust' ? [['회사', '동원약품중부', 'width:130px'], ['거래처', '', 'width:180px;background:#fff59d'], ['거래처구분', '매입처', 'width:110px']]
+      : [['상품기준', '우선처', 'width:80px'], ['', '10299) 한국노바티스', 'width:180px'], ['조회구분', '판매가능 상품만', 'width:130px'], ['성분코드', '', 'width:150px'], ['약품코드', '', 'width:150px']];
+    const checks = tab === 'cust' ? [] : [[tab === 'std' ? '거래중지 제외' : '생산중지된 것 제외', false]];
+    const W_ = {
+      title: tab === 'std' ? '표준거래처 반품정보 일괄수정 (CM3011P · 신규)' : tab === 'cust' ? '거래처 반품정보 일괄수정 (CM3041P · 신규)' : '상품 정보 일괄수정 (CM2061P · 반품정보 추가)',
+      topHint: '조회 → 빠른 보기로 좁히기 → 선택 → 바꿀 항목·값 → 미리 적용 → 저장',
+      filters: filters.map(f => ({ label: f[0], val: f[1], style: f[2], off: tab === 'cust' && f[0] === '회사', isGubn: tab === 'prod' && f[0] === '조회구분', isBase: tab === 'prod' && f[0] === '상품기준', isComp: tab === 'prod' && f[0] === '', isPlain: !(tab === 'prod' && (f[0] === '조회구분' || f[0] === '상품기준' || f[0] === '')) })),
+      base: W.base || 'prior', onBase: ev => this.w({ base: ev.target.value, compOpen: false }),
+      compQ: W.compQ === undefined ? '10299) 한국노바티스' : W.compQ, compOff: (W.base || 'prior') === 'all', compOpen: !!W.compOpen && (W.base || 'prior') !== 'all',
+      compSugg: compSugg, compNone: compSugg.length === 0,
+      // 칸을 누르면 들어 있는 글자를 통째로 선택 → 바로 새로 입력하면 덮어씀
+      onCompFocus: ev => { const el = ev.target; this.w({ compOpen: true }); setTimeout(() => { try { el.select(); } catch (e) {} }, 0); },
+      onCompClick: ev => { const el = ev.target; if (el.value && el.selectionStart === el.selectionEnd) { try { el.select(); } catch (e) {} } },
+      onCompQ: ev => { const q = ev.target.value.trim(); const hit = /^\d{5}$/.test(q) ? this.state.std.rows.find(x => x.id === q) : null;
+        if (hit) this.w({ compQ: hit.id + ') ' + hit.name.replace('(주)', ''), compCd: hit.id, compOpen: false });
+        else this.w({ compQ: ev.target.value, compCd: q === '' ? '' : this.state[tab].compCd, compOpen: q !== '' }); },
+      gubn: W.gubn || 'saleOk', onGubn: ev => this.w({ gubn: ev.target.value }),
+      checks: checks.map(k => ({ label: k[0], on: k[1] })),
+      quick: quickDefs.map(q => ({ label: q[1], cnt: W.rows.filter(r => baseOk(r) && gubnOk(r) && qmatch(r) && qtest(q[0], r)).length, cls: 'qbtn' + (W.quick === q[0] ? ' on' : ''), pick: () => this.w({ quick: q[0] }) })),
+      q: W.q, onQ: ev => this.w({ q: ev.target.value }),
+      cols: cols.map(c => ({ label: c[0], style: c[1] ? 'width:' + c[1] + 'px' : '' })),
+      rows: rows,
+      allOn: visible.length > 0 && visible.every(r => W.sel[r.id]),
+      toggleAll: () => { const all = visible.length > 0 && visible.every(r => this.state[tab].sel[r.id]); const sel = Object.assign({}, this.state[tab].sel); visible.forEach(r => { sel[r.id] = !all; }); this.w({ sel: sel }); },
+      selCnt: selIds.length, viewCnt: visible.length,
+      selView: () => { const sel = Object.assign({}, this.state[tab].sel); visible.forEach(r => { sel[r.id] = true; }); this.w({ sel: sel }); },
+      selNone: () => this.w({ sel: {} }),
+      isStdTab: tab === 'std', isCustTab: tab === 'cust', isProdTab: tab === 'prod',
+      item: item, onItem: ev => this.w({ item: ev.target.value, lastRtn: RTN_ITEMS[ev.target.value] ? ev.target.value : this.state[tab].lastRtn }), itemHint: ITEM_HINT[item] || '',
+      // CM2061P : 첫 목록에서 '반품정보'를 고르면 두 번째 목록(수정할 내용)이 나옴
+      topItem: RTN_ITEMS[item] ? 'rtn' : item, isRtnGroup: !!RTN_ITEMS[item],
+      onTopItem: ev => { const v = ev.target.value; this.w({ item: v === 'rtn' ? (this.state[tab].lastRtn || 'type') : v }); },
+      apply: apply, applyOff: selIds.length === 0 || (item === 'copy' && !E.copyFrom),
+      undo: () => this.w({ pend: {}, skip: {}, msg: '미리 적용을 취소했습니다.', msgCls: 'msg' }), undoOff: pendCnt === 0 && Object.keys(W.skip).length === 0,
+      save: save, saveOff: pendCnt === 0, saveCnt: pendCnt ? ' (' + pendCnt + ')' : '',
+      hasMsg: !!W.msg, msg: W.msg, msgCls: W.msgCls,
+      where: where
+    };
+    const tabs = [['std', '① 표준거래처 일괄수정 (신규)'], ['cust', '② 거래처 일괄수정 (신규)'], ['prod', '③ 상품 일괄수정 CM2061P (반품정보 추가)']].map(t => ({ label: t[1], cls: 'chip' + (tab === t[0] ? ' on' : ''), pick: () => this.setState({ tab: t[0] }) }));
+    return { tabs: tabs, w: W_, e: e, reset: () => this.setState(this.fresh(tab)) };
+  }
+}
+
+dcMount('tpl', 'app', Component);
+</script>
+</body>
+</html>

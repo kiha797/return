@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>다미스 반품조건 시안</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;font-family:system-ui,sans-serif;font-size:14px}
+body{margin:0}
+.root{font-family:"Malgun Gothic","Noto Sans KR",sans-serif;font-size:12px;color:#1c2433}
+.bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#1f2d4a;color:#fff;padding:10px 16px}
+.bar b{font-weight:700}
+.chip{border:1px solid #8fa3c7;background:#2c3e63;color:#fff;font:inherit;padding:5px 10px;cursor:pointer;border-radius:2px;min-height:28px}
+.chip:hover{background:#3b5183}
+.win{background:#dde4ef;border:1px solid #9fb0cc}
+.ttl{background:#2b3f63;color:#fff;padding:7px 10px;display:flex;justify-content:space-between;gap:8px}
+.ttl b{font-weight:700}
+.tabs{display:flex;gap:2px;padding:8px 10px 0 10px;border-bottom:1px solid #9fb0cc}
+.tab{padding:5px 12px;border:1px solid #9fb0cc;border-bottom:none;background:#cfd8e6;color:#1c2433}
+.tab.on{background:#f6f8fc;font-weight:700;color:#9a3412;border-color:#c2410c}
+.gb{position:relative;border:1px solid #9fb0cc;margin:16px 10px 0 10px;padding:14px 10px 8px 10px;background:#e8edf5}
+.gb>.lg{position:absolute;top:-8px;left:10px;background:#dde4ef;padding:0 4px;color:#25406e}
+.rb{position:relative;border:2px solid #c2410c;background:#f6f8fc;padding:16px 8px 8px 8px;margin:16px 10px 0 10px}
+.rb>.lg{position:absolute;top:-9px;left:8px;background:#dde4ef;padding:0 4px;color:#9a3412;font-weight:700}
+.r{display:flex;align-items:center;gap:6px;min-height:26px;margin-bottom:6px;flex-wrap:wrap}
+.lb{width:104px;text-align:right;flex:none}
+input[type=text],select,textarea{font:inherit;box-sizing:border-box;border:1px solid #8a97ad;background:#fff;color:#1c2433}
+input[type=text],select{height:22px;padding:0 4px}
+textarea{padding:3px 4px;resize:none}
+input[type=text]:disabled,select:disabled,textarea:disabled{background:#d6d9df;color:#374151}
+input[type=text]:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid #1d4ed8;outline-offset:-1px}
+.num{width:56px;text-align:right}
+.date{width:96px}
+.btn{font:inherit;border:1px solid #8a97ad;background:#f3f6fb;height:24px;padding:0 10px;cursor:pointer;color:#1c2433}
+.btn:hover{background:#e3ebf8}
+.btn:disabled{color:#6b7280;cursor:default;background:#e5e7eb}
+.btn.sm{height:20px;padding:0 6px}
+.seg{font:inherit;font-size:13px;border:1px solid #6b7a96;background:#f3f6fb;color:#1c2433;height:32px;min-width:110px;cursor:pointer}
+.seg:hover{background:#e3ebf8}
+.seg.on{background:#1f2d4a;color:#fff;border-color:#1f2d4a;font-weight:700}
+.seg:disabled{cursor:default}
+.seg.ng{color:#b91c1c;border-color:#b91c1c;background:#fef2f2}
+.seg.ng:hover{background:#fee2e2}
+.seg.ng.on{background:#b91c1c;color:#fff;border-color:#b91c1c}
+.seg.cd{color:#1d4ed8;border-color:#1d4ed8;background:#eff6ff}
+.seg.cd:hover{background:#dbeafe}
+.seg.cd.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.seg.dim,.seg.dim.ng,.seg.dim.cd{background:#e5e7eb;color:#6b7280;border-color:#c4c9d1;opacity:.55;font-weight:400}
+.seg.dim:hover{opacity:.85}
+.add{font:inherit;border:1px dashed #6b7a96;background:#fff;color:#1f2d4a;height:26px;padding:0 7px;cursor:pointer}
+.add:hover{background:#e3ebf8}
+.add:disabled{color:#6b7280;border-color:#b6bfce;background:#eceff4;cursor:default}
+.ck{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.ck input{margin:0;width:14px;height:14px}
+.ckbox{background:#d6d9df;padding:2px 8px 2px 4px}
+.cond{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#fff;border:1px solid #9fb0cc;padding:6px 8px;margin-bottom:5px;width:100%;box-sizing:border-box}
+.cond.ro{background:#eef0f4}
+.cond .tg{font-weight:700;color:#1f2d4a;min-width:58px;flex:none;white-space:nowrap}
+.band{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:3px 0;border-top:1px solid #e5e9f0}
+.bandh{display:flex;gap:4px;font-size:11px;color:#4b5563;padding-bottom:2px}
+.hint{color:#4b5563;font-size:11px}
+.bandx{width:100%;font-size:11px;color:#1D4ED8;padding:1px 0 2px 2px}
+.warn{background:#fff7ed;border:2px solid #ea580c;color:#7c2d12;padding:7px 9px;margin-bottom:8px;font-size:12px;line-height:1.5}
+.okbadge{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:13px;background:#dcfce7;color:#166534;border:1px solid #22c55e;font-weight:700;font-size:12px;margin-left:4px}
+.okmsg{background:#f0fdf4;border:1px solid #86efac;color:#14532d;padding:5px 8px;margin-bottom:8px;font-size:12px}
+.from{background:#fff7ed;border:1px solid #fdba74;color:#7c2d12;padding:5px 8px;margin-bottom:8px;font-size:12px}
+.sum{width:100%;box-sizing:border-box;min-height:40px;border:1px solid #8a97ad;background:#d6d9df;padding:6px;line-height:1.5;color:#111827}
+.note h3{margin:0 0 4px 0;font-size:13px;font-weight:700;color:#111827}
+.note p{margin:0;line-height:1.6;color:#374151}
+.step{flex:none;width:22px;height:22px;border-radius:11px;background:#c2410c;color:#fff;font-weight:700;text-align:center;line-height:22px}
+
+
+:root{--nav-bg:#16233d;--nav-fg:#e8edf6;--nav-dim:#9fb0cc;--nav-on:#c2410c;--page-bg:#e9edf3;color-scheme:light}
+html,body{background:var(--page-bg)}
+.topnav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--nav-bg);display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-family:"Malgun Gothic","Noto Sans KR",sans-serif;font-size:13px}
+.topnav b{color:var(--nav-fg);margin-right:10px;font-weight:700}
+.topnav .nv{color:var(--nav-dim);text-decoration:none;padding:6px 10px;border:1px solid #33476b;border-radius:3px}
+.topnav .nv:hover{color:var(--nav-fg);border-color:var(--nav-dim)}
+.topnav .nv.on{color:#fff;background:var(--nav-on);border-color:var(--nav-on);font-weight:700}
+.topnav .nv:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.topnav .note{color:var(--nav-dim);margin-left:auto;font-size:12px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--nav-bg)}
+.stage{overflow-x:auto;-webkit-overflow-scrolling:touch}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="시안 목록"><b>다미스 반품조건 시안</b><a class="nv on" href="index.html">반품정보 시안</a><a class="nv" href="cm3011p.html">CM3011P 표준거래처 일괄수정</a><a class="nv" href="cm3041p.html">CM3041P 거래처 일괄수정</a><a class="nv" href="cm2061p.html">CM2061P 상품 일괄수정</a><a class="nv" href="spec.html">개발자 설계서</a><span class="note">바로 눌러 볼 수 있는 보기 전용 · 예시 데이터</span></nav>
+<div class="stage"><div id="app"></div></div>
+<script type="text/plain" id="tpl">
+<div class="root" style="width:1920px;box-sizing:border-box">
+  <datalist id="dl-lim"><option value="0.3"></option><option value="0.5"></option><option value="0.8"></option></datalist>
+
+  <div class="bar">
+    <b>시안 · 제약사 반품조건 3단계 연결 (표준거래처 → 거래처 → 상품)</b>
+    <span style="flex-grow:1"></span>
+    <span>예시:</span>
+    <sc-for list="{{demos}}" as="d" hint-placeholder-count="8">
+      <button class="chip" type="button" onClick="{{d.run}}">{{d.label}}</button>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;gap:24px;align-items:flex-start;padding:20px 20px 12px 20px;background:#f4f6fa">
+    <sc-for list="{{panels}}" as="p" hint-placeholder-count="3">
+      <div class="win" style="width:604px;flex:none;padding-bottom:12px">
+        <div class="ttl"><span><b>{{p.no}}</b> {{p.title}}</span><span>{{p.sub}}</span></div>
+
+        <sc-if value="{{p.isStd}}" hint-placeholder-val="{{true}}">
+          <div class="tabs"><span class="tab">기본정보</span><span class="tab">추가정보</span><span class="tab on">반품조건</span></div>
+          <div class="gb">
+            <span class="lg">기본정보 (일부)</span>
+            <div class="r"><span class="lb">표준거래처코드</span><input type="text" disabled="{{yes}}" value="10234" style="width:96px"> <span>(자동부여)</span></div>
+            <div class="r" style="margin-bottom:0"><span class="lb">정식상호</span><input type="text" disabled="{{yes}}" value="예시제약(주)" style="width:200px"> <span class="hint">업체유형: 제약사</span></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{p.isCust}}" hint-placeholder-val="{{false}}">
+          <div class="tabs"><span class="tab">기본정보</span><span class="tab">추가정보</span><span class="tab on">반품조건</span></div>
+          <div class="gb">
+            <span class="lg">기본정보 (일부)</span>
+            <div class="r"><span class="lb">표준거래처</span><select disabled="{{yes}}" style="width:200px"><option>10234 예시제약(주)</option></select></div>
+            <div class="r" style="margin-bottom:0"><span class="lb">거래처코드</span><input type="text" disabled="{{yes}}" value="10234" style="width:96px"> <span>(표준거래처와 동일)</span></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{p.isProd}}" hint-placeholder-val="{{false}}">
+          <div class="gb">
+            <span class="lg">판매 (기존 항목 그대로)</span>
+            <div class="r" style="align-items:flex-start"><span class="lb" style="margin-top:3px">全社판매비고</span><textarea disabled="{{yes}}" style="width:290px;height:36px"></textarea></div>
+            <div class="r" style="align-items:flex-start"><span class="lb" style="margin-top:3px">當社판매비고</span><textarea style="width:290px;height:36px"></textarea></div>
+            <div class="r"><span class="lb"></span><label class="ck ckbox"><input type="checkbox" checked="{{p.salesBan}}" onChange="{{p.onSalesBan}}" disabled="{{p.salesBanOff}}"> 판매반품금지 체크 (全社)</label> <span class="hint" style="{{p.salesBanHintStyle}}">{{p.salesBanHint}}</span></div>
+            <div class="r"><span class="lb">온라인판매금지</span><select class="date" disabled="{{yes}}"><option>2999-12-31</option></select> <span>(유팜몰WOS에서 판매금지)</span></div>
+            <div class="r"><span class="lb"></span><label class="ck"><input type="checkbox" checked="{{yes}}"> 판매가능상품 체크</label></div>
+            <div class="r"><span class="lb">1일판매제한수량</span><input type="text" class="num" value="0" style="width:96px"> <span>(한 판매처에 대해서)</span></div>
+            <div class="r"><span class="lb">병의원外판매금지</span><select class="date"><option>2999-12-31</option></select></div>
+            <div class="r"><span class="lb">全社판매금지일</span><select class="date" disabled="{{yes}}"><option>2999-12-31</option></select></div>
+            <div class="r"><span class="lb">판매금지일</span><select class="date"><option>2999-12-31</option></select></div>
+            <div class="r" style="margin-bottom:0"><span class="lb">판매반품금지일</span><select class="date"><option>2999-12-31</option></select> <span class="hint">우선처: 10234 예시제약(주)</span></div>
+          </div>
+        </sc-if>
+
+        <div class="rb">
+          <span class="lg">{{p.legend}}</span>
+
+          <sc-if value="{{p.hasMode}}" hint-placeholder-val="{{false}}">
+            <div class="r">
+              <label class="ck"><input type="radio" name="{{p.radioName}}" checked="{{p.isInherit}}" onChange="{{p.setInherit}}"> {{p.inheritLabel}}</label>
+              <label class="ck"><input type="radio" name="{{p.radioName}}" checked="{{p.isCustom}}" onChange="{{p.setCustom}}" disabled="{{p.customOff}}"> {{p.customLabel}}</label>
+            </div>
+            <sc-if value="{{p.showFrom}}" hint-placeholder-val="{{false}}">
+              <div class="from">{{p.fromText}}</div>
+            </sc-if>
+            <sc-if value="{{p.showCopied}}" hint-placeholder-val="{{false}}">
+              <div class="hint" style="color:#1D4ED8;font-weight:600;margin-bottom:8px">{{p.copiedText}}</div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{p.showWarn}}" hint-placeholder-val="{{false}}">
+            <div class="warn"><b>⚠ 제약사 반품불가 상품입니다.</b> 고객 반품을 받으면 제약사에 돌려보낼 수 없습니다. 위의 <b>판매반품금지 체크(全社)</b>를 확인하세요.</div>
+          </sc-if>
+
+          <div class="r">
+            <span class="lb" style="width:64px;text-align:left">반품구분</span>
+            <sc-for list="{{p.segs}}" as="s" hint-placeholder-count="2">
+              <button class="{{s.cls}}" type="button" aria-pressed="{{s.on}}" disabled="{{s.off}}" onClick="{{s.pick}}">{{s.label}}</button>
+            </sc-for>
+            <sc-if value="{{p.isFree}}" hint-placeholder-val="{{false}}">
+              <span class="okbadge">● 반품가능</span>
+            </sc-if>
+            <span class="hint">{{p.segHint}}</span>
+          </div>
+          <sc-if value="{{p.showNgNote}}" hint-placeholder-val="{{false}}">
+            <div class="r"><span style="width:64px"></span><span class="hint" style="color:#B91C1C;font-weight:600">※ 반품불가로 저장하면 이 제약사가 우선처인 모든 상품의 판매반품금지 체크(全社)가 함께 체크됩니다.</span></div>
+          </sc-if>
+
+          <sc-if value="{{p.isCond}}" hint-placeholder-val="{{true}}">
+            <div class="r">
+              <span class="lb" style="width:64px;text-align:left">조건 추가</span>
+              <sc-for list="{{p.addBtns}}" as="a" hint-placeholder-count="4">
+                <button class="add" type="button" disabled="{{a.off}}" onClick="{{a.add}}">+ {{a.label}}</button>
+              </sc-for>
+            </div>
+            <sc-if value="{{p.noConds}}" hint-placeholder-val="{{false}}">
+              <div class="r"><span style="width:70px"></span><span class="hint" style="color:#9a3412">조건부반품은 조건을 1개 이상 추가해야 저장됩니다.</span></div>
+            </sc-if>
+            <sc-for list="{{p.conds}}" as="c" hint-placeholder-count="1">
+              <div class="{{c.cls}}">
+                <span class="tg">{{c.title}}</span>
+                <sc-if value="{{c.isExd}}" hint-placeholder-val="{{true}}">
+                  <span class="hint" style="color:#1D4ED8;font-weight:600">※ 유효기한 당일(유효기한 경과 시) = 경과 0개월로 입력</span>
+                </sc-if>
+                <sc-if value="{{c.isBlock}}" hint-placeholder-val="{{true}}">
+                  <span style="flex-grow:1"></span>
+                  <sc-if value="{{c.isExd}}" hint-placeholder-val="{{true}}">
+                    <button class="btn sm" type="button" onClick="{{c.addBand}}" disabled="{{c.dis}}">+ 구간 추가</button>
+                  </sc-if>
+                  <button class="btn sm" type="button" onClick="{{c.del}}" disabled="{{c.dis}}" aria-label="조건 삭제">삭제</button>
+                </sc-if>
+                <sc-if value="{{c.isExd}}" hint-placeholder-val="{{true}}">
+                  <div style="width:100%">
+                    <div class="bandh"><span style="width:150px">시작</span><span style="width:20px"></span><span style="width:150px">끝</span><span style="width:84px">공제율</span></div>
+                    <sc-for list="{{c.bands}}" as="b" hint-placeholder-count="2">
+                      <div class="band">
+                        <select value="{{b.fs}}" onChange="{{b.onFs}}" disabled="{{b.dis}}" style="width:76px"><option value="제한없음">제한없음</option><option value="임박">임박</option><option value="경과">경과</option></select>
+                        <span style="display:inline-flex;align-items:center;gap:4px;width:70px">
+                          <sc-if value="{{b.fmShow}}" hint-placeholder-val="{{true}}">
+                            <input type="text" inputmode="numeric" class="num" value="{{b.fm}}" onChange="{{b.onFm}}" disabled="{{b.dis}}" style="width:38px"><span>개월</span>
+                          </sc-if>
+                        </span>
+                        <span style="width:14px;text-align:center">~</span>
+                        <select value="{{b.ts}}" onChange="{{b.onTs}}" disabled="{{b.dis}}" style="width:76px"><option value="임박">임박</option><option value="경과">경과</option><option value="제한없음">제한없음</option></select>
+                        <span style="display:inline-flex;align-items:center;gap:4px;width:70px">
+                          <sc-if value="{{b.tmShow}}" hint-placeholder-val="{{true}}">
+                            <input type="text" inputmode="numeric" class="num" value="{{b.tm}}" onChange="{{b.onTm}}" disabled="{{b.dis}}" style="width:38px"><span>개월</span>
+                          </sc-if>
+                        </span>
+                        <input type="text" inputmode="decimal" class="num" value="{{b.rate}}" onChange="{{b.onRate}}" disabled="{{b.rateOff}}" placeholder="없음" style="width:48px;margin-left:8px"><span>%</span>
+                        <span style="flex-grow:1"></span>
+                        <button class="btn sm" type="button" onClick="{{b.del}}" disabled="{{b.dis}}" aria-label="구간 삭제">−</button>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{c.isLim}}" hint-placeholder-val="{{false}}">
+                  <select value="{{c.base}}" onChange="{{c.onBase}}" disabled="{{c.dis}}" style="width:130px"><option value="연간 매입액">연간 매입액</option><option value="분기 매입액">분기 매입액</option><option value="담당자별 매출액">담당자별 매출액</option></select>
+                  <span>의</span><input type="text" class="num" list="dl-lim" value="{{c.rate}}" onChange="{{c.onRate}}" disabled="{{c.dis}}" style="width:44px"><span>% 까지</span>
+                  <sc-if value="{{c.showLimInfo}}" hint-placeholder-val="{{false}}">
+                  <div style="width:100%;order:10;margin-top:4px;background:#f8fafc;border:1px solid #d5dbe6;padding:6px 8px">
+                    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">
+                      <div><div class="hint">{{c.limBaseLabel}}</div><div style="font-weight:700">{{c.limBuy}}</div></div>
+                      <div><div class="hint">반품한도 금액</div><div style="font-weight:700">{{c.limCap}}</div></div>
+                      <div><div class="hint">현재 파손 반품액</div><div style="font-weight:700">{{c.limUsed}}</div></div>
+                      <div><div class="hint">매입액 대비</div><div style="{{c.limPctStyle}}">{{c.limPct}}</div></div>
+                    </div>
+                    <div style="margin-top:5px;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden"><div style="{{c.limBarStyle}}"></div></div>
+                    <div class="hint" style="margin-top:3px">{{c.limNote}}</div>
+                  </div>
+                  </sc-if>
+                </sc-if>
+                <sc-if value="{{c.isLot}}" hint-placeholder-val="{{false}}">
+                  <select value="{{c.mode}}" onChange="{{c.onMode}}" disabled="{{c.dis}}" style="width:196px"><option value="출하(매입) 제조번호 일치시만">출하(매입) 제조번호 일치시만</option><option value="일련번호 일치시만">일련번호 일치시만</option><option value="지정 제조번호 이후만">지정 제조번호 이후만</option><option value="지정 제조번호 불가">지정 제조번호 불가</option></select>
+                  <sc-if value="{{c.showVal}}" hint-placeholder-val="{{false}}">
+                    <input type="text" value="{{c.val}}" onChange="{{c.onVal}}" disabled="{{c.dis}}" maxlength="20" placeholder="제조번호" style="width:90px">
+                  </sc-if>
+                  <sc-if value="{{c.showLots}}" hint-placeholder-val="{{true}}">
+                    <span style="display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center">
+                      <sc-for list="{{c.lotList}}" as="l" hint-placeholder-count="2">
+                        <span style="display:inline-flex;gap:2px;align-items:center">
+                          <input type="text" value="{{l.v}}" onChange="{{l.on}}" disabled="{{l.dis}}" maxlength="20" placeholder="제조번호" style="width:90px">
+                          <button class="btn sm" type="button" onClick="{{l.del}}" disabled="{{l.delOff}}" aria-label="제조번호 삭제">−</button>
+                        </span>
+                      </sc-for>
+                      <button class="btn sm" type="button" onClick="{{c.addLot}}" disabled="{{c.addLotOff}}">+ 번호 추가</button>
+                    </span>
+                  </sc-if>
+                </sc-if>
+                <sc-if value="{{c.isSt}}" hint-placeholder-val="{{false}}">
+                  <div style="width:100%">
+                    <div class="bandh"><span style="width:84px">상태</span><span style="width:84px">공제율</span><span style="width:52px">불가</span></div>
+                    <sc-for list="{{c.rows}}" as="r" hint-placeholder-count="3">
+                      <div class="band">
+                        <span style="width:84px;font-weight:600">{{r.name}}</span>
+                        <input type="text" inputmode="decimal" class="num" value="{{r.rate}}" onChange="{{r.onRate}}" disabled="{{r.rateOff}}" placeholder="기본" style="width:48px"><span style="width:28px">%</span>
+                        <label class="ck" style="width:52px"><input type="checkbox" checked="{{r.ng}}" onChange="{{r.onNg}}" disabled="{{r.dis}}"> 불가</label>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{c.isInline}}" hint-placeholder-val="{{false}}">
+                  <span style="flex-grow:1"></span>
+                  <button class="btn sm" type="button" onClick="{{c.del}}" disabled="{{c.dis}}" aria-label="조건 삭제">삭제</button>
+                </sc-if>
+              </div>
+            </sc-for>
+          </sc-if>
+
+          <div class="r">
+            <span class="lb" style="width:64px;text-align:left">메모</span>
+            <input type="text" value="{{p.etc}}" onChange="{{p.onEtc}}" disabled="{{p.dis}}" maxlength="60" style="flex-grow:1;min-width:140px" placeholder="표준 항목으로 표현할 수 없는 내용 (60자)">
+          </div>
+
+          <div class="r" style="align-items:flex-start;margin-bottom:0">
+            <span class="lb" style="width:64px;text-align:left;margin-top:4px">요약</span>
+            <div style="flex-grow:1;min-width:0"><div class="sum">{{p.summary}}</div><div class="hint" style="margin-top:3px">{{p.sumHint}}</div></div>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;padding:12px 20px 28px 20px;background:#f4f6fa">
+    <div class="note" style="display:flex;gap:10px"><span class="step">1</span><div><h3>표준거래처 등록 (기획실 관리)</h3><p>기본정보·추가정보 옆에 ‘제약사 반품조건’ 탭을 새로 만듭니다. 제약사가 우리(동원약품그룹)에게 반품을 받아주는 조건을 그룹 기준으로 한 번 입력합니다.</p></div></div>
+    <div class="note" style="display:flex;gap:10px"><span class="step">2</span><div><h3>거래처 등록 (각사)</h3><p>‘표준거래처 반품조건 따름’이면 표준거래처의 제약사 반품조건이 모두 그대로 보입니다(수정 불가). 우리 회사만 다를 때 ‘이 제약사(우선처)만 직접 입력’을 고르면 표준값이 복사되어 고칠 수 있게 됩니다. <b>단, 표준거래처가 반품불가면 직접 입력을 고를 수 없습니다.</b></p></div></div>
+    <div class="note" style="display:flex;gap:10px"><span class="step">3</span><div><h3>상품 등록 (각사)</h3><p>‘우선처 반품조건 따름’이면 그 상품 우선처의 거래처 등록 제약사 반품조건을 따릅니다. 거래처가 표준을 따르면 결국 표준거래처 값이 보입니다. 상품만 다를 때만 직접 입력합니다.</p></div></div>
+    <div class="note" style="display:flex;gap:10px"><span class="step">✓</span><div><h3>판매반품금지(全社)와의 관계</h3><p>제약사 반품조건은 <b>우리 → 제약사</b> 반품, 판매반품금지 체크(全社)는 <b>고객 → 우리</b> 반품을 막는 기존 스위치로 따로 둡니다. <b>표준거래처가 반품불가면 판매반품금지 체크가 자동으로 체크되고 해제할 수 없습니다.</b> 거래처·상품 단계에서만 반품불가인데 판매반품금지가 꺼져 있으면 상품 등록에 주황색 경고가 나옵니다.</p></div></div>
+  </div>
+</div>
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="assets/app.js"></script>
+<script>
+
+let UID = 10;
+const band = patch => Object.assign({ id: ++UID, fs: '임박', fm: '', ts: '제한없음', tm: '', rate: '', }, patch || {});
+const NO_MM = { '제한없음': true };
+const sideTxt = (side, m) => side === '제한없음' ? '제한없음' : side + ' ' + (m === '' ? '?' : m) + '개월';
+const isAll = b => b.fs === '제한없음' && b.ts === '제한없음';
+const fromPlain = (s, m) => s === '제한없음' ? '유효기한 상관없이' : s === '임박' ? '유효기한 ' + (m || '?') + '개월 전부터' : (String(m) === '0' ? '유효기한이 지난 날부터' : '유효기한 지나고 ' + (m || '?') + '개월 후부터');
+const toPlain = (s, m) => s === '제한없음' ? '이후 계속' : s === '임박' ? '유효기한 ' + (m || '?') + '개월 전까지' : (String(m) === '0' ? '유효기한 날까지' : '유효기한 지나고 ' + (m || '?') + '개월까지');
+const bandPlain = b => (isAll(b) ? '유효기한 상관없이' : fromPlain(b.fs, b.fm) + ' ~ ' + toPlain(b.ts, b.tm)) + ' ' + ((b.rate !== '' && b.rate !== '0' ? b.rate + '% 공제하고 반품' : '공제 없이 반품'));
+const afterOnly = bands => bands.length > 0 && bands.every(b => b.fs === '경과');
+const bandTxt = b => (isAll(b) ? '상관없이' : sideTxt(b.fs, b.fm) + ' ~ ' + sideTxt(b.ts, b.tm)) + ' ' + ((b.rate !== '' && b.rate !== '0' ? b.rate + '% 공제' : '공제 없음'));
+const USER_EX = () => [band({ fs: '임박', fm: '3', ts: '경과', tm: '10', rate: '20' }), band({ fs: '경과', fm: '10', ts: '제한없음', rate: '30' })];
+// 상태별 공제·불가 : 칸이 고정된 표 (빈칸 = 유효기한별 공제 그대로 / 숫자 = 그 상태일 때 대신 적용 / 불가)
+const ST_ROWS = patch => [['dmg', '파손품'], ['split', '소분·낱개']].map(x => Object.assign({ k: x[0], name: x[1], rate: '', ng: false }, (patch || {})[x[0]] || {}));
+const stPlain = r => r.ng ? '그 상태는 반품불가' : (r.rate !== '' ? '이 상태는 ' + r.rate + '% 공제하고 반품' : '유효기한별 공제 그대로');
+const KINDS = {
+  exd:  { title: '유효기한별 공제', make: () => ({ kind: 'exd', bands: [band({ fs: '임박', fm: '3', ts: '경과', tm: '10' })] }) },
+  st:   { title: '상태별 공제·불가', make: () => ({ kind: 'st', rows: ST_ROWS() }) },
+  lim:  { title: '반품한도', make: () => ({ kind: 'lim', base: '연간 매입액', rate: '' }) },
+  lot:  { title: '제조일련번호', make: () => ({ kind: 'lot', mode: '출하(매입) 제조번호 일치시만', val: '', lots: [''] }) }
+};
+const ORDER = ['exd', 'st', 'lim', 'lot'];
+const MULTI = {};
+const mk = (kind, patch) => Object.assign({ id: ++UID }, KINDS[kind].make(), patch || {});
+const BLANK = () => ({ type: '', conds: [], etc: '' });
+const isEmpty = d => !d.type && !d.etc && (!d.conds || d.conds.length === 0);
+const cloneData = d => ({ type: d.type, etc: d.etc, conds: (d.conds || []).map(c => Object.assign({}, c, { id: ++UID }, c.bands ? { bands: c.bands.map(b => Object.assign({}, b, { id: ++UID })) } : {}, c.rows ? { rows: c.rows.map(r => Object.assign({}, r)) } : {}, c.lots ? { lots: c.lots.slice() } : {})) });
+const START = () => ({
+  std: Object.assign(BLANK(), { type: 'cond', conds: [mk('exd', { bands: USER_EX() })] }),
+  cust: Object.assign(BLANK(), { mode: 'inherit' }),
+  prod: Object.assign(BLANK(), { mode: 'inherit' }),
+  salesBan: false
+});
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = START();
+  }
+  part(key, patch) {
+    this.setState({ [key]: Object.assign({}, this.state[key], patch) });
+  }
+  summaryOf(d) {
+    const p = [];
+    if (!d.type) p.push('반품가능');
+    else if (d.type === 'ng') p.push('반품불가');
+    else if (d.type === 'cond') {
+      if (!d.conds.length) p.push('조건부반품 (조건 미입력)');
+      else {
+        p.push('조건부반품');
+        d.conds.forEach(c => {
+          if (c.kind === 'exd') {
+            if (c.bands.length) p.push('유효기한 ' + (afterOnly(c.bands) ? '경과품만: ' : '') + c.bands.map(bandTxt).join(', ') + (c.bands.some(isAll) ? '' : ' (그 외 기간 반품불가)'));
+          } else if (c.kind === 'st') {
+            const x = c.rows.filter(r => r.ng || r.rate !== '').map(r => r.name + (r.ng ? ' 불가' : ' ' + r.rate + '% 공제'));
+            if (x.length) p.push(x.join(', '));
+          } else if (c.kind === 'lim') p.push(c.base + '의 ' + (c.rate !== '' ? c.rate + '%' : '비율 미입력') + '까지');
+          else if (c.kind === 'lot') {
+            const nos = c.mode === '지정 제조번호 불가' ? (c.lots || []).filter(x => x.trim() !== '').join(', ') : (c.mode === '지정 제조번호 이후만' ? c.val : '');
+            p.push(c.mode + (nos ? ' ' + nos : ''));
+          }
+        });
+      }
+    }
+    if (d.etc) p.push('메모: ' + d.etc);
+    return p.join(' / ');
+  }
+  panel(key, data, editable, meta) {
+    const dis = !editable;
+    const set = k => ev => { if (editable) this.part(key, { [k]: ev.target.value }); };
+    const chk = k => ev => { if (editable) this.part(key, { [k]: ev.target.checked }); };
+    const upd = (id, patch) => { if (editable) this.part(key, { conds: this.state[key].conds.map(c => c.id === id ? Object.assign({}, c, patch) : c) }); };
+    // 반품한도 현황 (시안 예시 금액 — 실제는 우선처 기준 매입·반품 집계)
+    const LIM_DATA = {
+      std:  { scope: '그룹 8개사 합계 · 우선처 10234 예시제약', '연간 매입액': [9860000000, 52300000, '2026년 매입액'], '분기 매입액': [2410000000, 15900000, '2026년 4분기 매입액'], '담당자별 매출액': [3120000000, 21000000, '담당자 매출액 (올해)'] },
+      cust: { scope: '동원약품중부 · 우선처 10234 예시제약', '연간 매입액': [1250000000, 8430000, '2026년 매입액'], '분기 매입액': [318000000, 2950000, '2026년 4분기 매입액'], '담당자별 매출액': [410000000, 3100000, '담당자 매출액 (올해)'] }
+    };
+    const won = n => Math.round(n).toLocaleString('ko-KR') + '원';
+    const limInfo = c => {
+      const D = LIM_DATA[key === 'std' ? 'std' : 'cust'], row = D[c.base] || D['연간 매입액'];
+      const buy = row[0], used = row[1], rate = parseFloat(c.rate);
+      const pct = used / buy * 100, cap = isNaN(rate) ? null : buy * rate / 100;
+      const ratio = cap ? used / cap * 100 : null;
+      const col = ratio === null ? '#1d4ed8' : ratio > 100 ? '#b91c1c' : ratio >= 80 ? '#c2410c' : '#15803d';
+      return {
+        showLimInfo: key !== 'std',   // 표준거래처 등록에서는 현황 박스를 보이지 않음 (거래처·상품 등록에서만)
+        limScope: D.scope + ' · 시안 예시 금액', limBaseLabel: row[2], limBuy: won(buy),
+        limCap: cap === null ? '— (% 입력)' : won(cap) + ' (' + c.rate + '%)',
+        limUsed: won(used), limPct: pct.toFixed(2) + '%',
+        limPctStyle: 'font-weight:700;color:' + col,
+        limBarStyle: 'height:8px;background:' + col + ';width:' + Math.min(ratio === null ? pct : ratio, 100).toFixed(1) + '%',
+        limNote: cap === null ? '한도 %를 넣으면 한도 금액과 남은 금액이 계산됩니다.'
+          : ratio > 100 ? '한도를 ' + won(used - cap) + ' 넘었습니다 (한도의 ' + ratio.toFixed(0) + '%). 더 반품하려면 제약사와 협의가 필요합니다.'
+          : '한도의 ' + ratio.toFixed(0) + '% 사용 · 남은 한도 ' + won(cap - used)
+      };
+    };
+    const conds = (data.conds || []).map(c => {
+      const sv = k => ev => upd(c.id, { [k]: ev.target.value });
+      const sb = k => ev => upd(c.id, { [k]: ev.target.checked });
+      return Object.assign({}, c, {
+        title: KINDS[c.kind].title, dis: dis, cls: dis ? 'cond ro' : 'cond',
+        ...(c.kind === 'lim' ? limInfo(c) : {}),
+        isExd: c.kind === 'exd', isSt: c.kind === 'st', isBlock: c.kind === 'exd' || c.kind === 'st', isInline: !(c.kind === 'exd' || c.kind === 'st'), isLim: c.kind === 'lim', isLot: c.kind === 'lot',
+        showVal: c.mode === '지정 제조번호 이후만', showLots: c.mode === '지정 제조번호 불가',
+        lotList: (c.lots || ['']).map((v, i) => ({
+          v: v, dis: dis, delOff: dis || (c.lots || ['']).length <= 1,
+          on: ev => { const cur = this.state[key].conds.find(x => x.id === c.id); if (cur) upd(c.id, { lots: (cur.lots || ['']).map((x, j) => j === i ? ev.target.value : x) }); },
+          del: () => { const cur = this.state[key].conds.find(x => x.id === c.id); if (cur && (cur.lots || []).length > 1) upd(c.id, { lots: cur.lots.filter((x, j) => j !== i) }); }
+        })),
+        addLotOff: dis || (c.lots || []).length >= 20,
+        addLot: () => { const cur = this.state[key].conds.find(x => x.id === c.id); if (cur) upd(c.id, { lots: (cur.lots || ['']).concat(['']) }); },
+        onRate: sv('rate'),
+        rows: (c.rows || []).map(r => {
+          const ur = patch => { const cur = this.state[key].conds.find(x => x.id === c.id); if (cur) upd(c.id, { rows: cur.rows.map(x => x.k === r.k ? Object.assign({}, x, patch) : x) }); };
+          return Object.assign({}, r, {
+            dis: dis, rate: r.ng ? '' : r.rate, rateOff: dis || r.ng, plain: stPlain(r),
+            onRate: ev => ur({ rate: ev.target.value }), onNg: ev => ur({ ng: ev.target.checked })
+          });
+        }),
+        bands: (c.bands || []).map(b => {
+          const ub = patch => { const cur = this.state[key].conds.find(x => x.id === c.id); if (cur) upd(c.id, { bands: cur.bands.map(x => x.id === b.id ? Object.assign({}, x, patch) : x) }); };
+          return Object.assign({}, b, {
+            dis: dis, rateOff: dis,
+            fmShow: !NO_MM[b.fs], tmShow: !NO_MM[b.ts],
+            plain: bandPlain(b),
+            onFs: ev => ub({ fs: ev.target.value }), onFm: ev => ub({ fm: ev.target.value }),
+            onTs: ev => ub({ ts: ev.target.value }), onTm: ev => ub({ tm: ev.target.value }),
+            onRate: ev => ub({ rate: ev.target.value }),
+            del: () => { const cur = this.state[key].conds.find(x => x.id === c.id); if (cur) upd(c.id, { bands: cur.bands.filter(x => x.id !== b.id) }); }
+          });
+        }),
+        addBand: () => {
+          const cur = this.state[key].conds.find(x => x.id === c.id);
+          if (!cur) return;
+          const last = cur.bands[cur.bands.length - 1];
+          const nb = last && last.ts !== '제한없음' ? band({ fs: last.ts, fm: last.tm, ts: '제한없음' }) : band({ fs: '임박', fm: '3', ts: '경과', tm: '10' });
+          upd(c.id, { bands: cur.bands.concat([nb]) });
+        },
+        setAfterOnly: () => upd(c.id, { bands: [band({ fs: '경과', fm: '0', ts: '제한없음' })] }),
+        setAllPeriod: () => upd(c.id, { bands: [band({ fs: '제한없음', ts: '제한없음' })] }),
+        onBase: sv('base'), onMode: sv('mode'), onVal: sv('val'),
+        del: () => { if (editable) this.part(key, { conds: this.state[key].conds.filter(x => x.id !== c.id) }); }
+      });
+    });
+    const has = k => (data.conds || []).some(c => c.kind === k);
+    const segs = [['ng', '반품불가', 'ng'], ['cond', '조건부반품', 'cd']].map(x => ({
+      label: x[1], on: data.type === x[0], cls: 'seg ' + x[2] + (data.type === x[0] ? ' on' : ' dim'), off: dis,
+      pick: () => { if (editable) this.part(key, { type: data.type === x[0] ? '' : x[0] }); }
+    }));
+    return Object.assign({
+      dis: dis, segs: segs,
+      segHint: editable ? (data.type ? '다시 누르면 선택 해제 (해제하면 반품가능)' : '') : '',
+      isFree: !data.type,
+      isNg: data.type === 'ng', isCond: data.type === 'cond',
+      addBtns: ORDER.map(k => ({ label: KINDS[k].title, off: dis || (!MULTI[k] && has(k)), add: () => { if (editable) this.part(key, { conds: this.state[key].conds.concat([mk(k)]) }); } })),
+      conds: conds, noConds: editable && data.type === 'cond' && conds.length === 0,
+      etc: data.etc, onEtc: set('etc'),
+      summary: this.summaryOf(data),
+      sumHint: '저장할 때 자동 생성 · 읽기 전용'
+    }, meta);
+  }
+  load(o) {
+    const s = START();
+    this.setState({
+      std: Object.assign(BLANK(), o.std || s.std),
+      cust: Object.assign(BLANK(), { mode: 'inherit' }, o.cust || {}),
+      prod: Object.assign(BLANK(), { mode: 'inherit' }, o.prod || {}),
+      salesBan: !!o.salesBan
+    });
+  }
+  renderVals() {
+    const s = this.state;
+    // 표준거래처가 반품불가면 거래처는 직접 입력 불가 (항상 표준 따름)
+    const stdLock = s.std.type === 'ng';
+    const custMode = stdLock ? 'inherit' : s.cust.mode;
+    const custEff = custMode === 'inherit' ? s.std : s.cust;
+    const prodEff = s.prod.mode === 'inherit' ? custEff : s.prod;
+    const salesBanEff = stdLock || s.salesBan;
+    const toCustom = (key, src) => () => {
+      const cur = this.state[key];
+      if (cur.mode === 'custom') return;
+      // 직접 입력으로 바꾸면 윗단계에 입력된 값을 먼저 그대로 가져옴 → 필요한 부분만 고침
+      this.part(key, !isEmpty(src) ? Object.assign({ mode: 'custom', copied: true }, cloneData(src)) : Object.assign(BLANK(), { mode: 'custom', copied: false }));
+    };
+    const panels = [
+      this.panel('std', s.std, true, {
+        no: '①', title: '표준거래처 등록 (CM3010E)', sub: '기획실 일괄 관리', legend: '제약사 반품조건',
+        isStd: true, isCust: false, isProd: false, hasMode: false,
+        showNgNote: s.std.type === 'ng'
+      }),
+      this.panel('cust', custEff, custMode === 'custom', {
+        no: '②', title: '거래처 등록 (CM3040E)', sub: '각사 · 예: 동원약품중부', legend: '제약사 반품조건',
+        isStd: false, isCust: true, isProd: false, hasMode: true, radioName: 'mode-cust',
+        isInherit: custMode === 'inherit', isCustom: custMode === 'custom', customOff: stdLock,
+        inheritLabel: '표준거래처 반품조건 따름', customLabel: '이 제약사(우선처)만 직접 입력',
+        setInherit: () => this.part('cust', { mode: 'inherit' }), setCustom: () => { if (!stdLock) toCustom('cust', s.std)(); },
+        showFrom: stdLock,
+        showCopied: custMode === 'custom' && s.cust.copied !== undefined, copiedText: s.cust.copied ? '※ 표준거래처 반품조건을 그대로 가져왔습니다. 다른 부분만 고치세요.' : '※ 표준거래처에 입력된 반품조건이 없어 빈 칸에서 시작합니다.',
+        fromText: '표준거래처에서 반품불가로 정한 제약사라 거래처 등록에서 직접 입력할 수 없습니다.'
+      }),
+      this.panel('prod', prodEff, s.prod.mode === 'custom', {
+        no: '③', title: '상품 등록 (CM2060E) · 판매 영역', sub: '각사 · 예: 동원약품중부', legend: '제약사 반품조건 (기존 ‘반품조건설명’ 자리)',
+        isStd: false, isCust: false, isProd: true, hasMode: true, radioName: 'mode-prod',
+        isInherit: s.prod.mode === 'inherit', isCustom: s.prod.mode === 'custom',
+        inheritLabel: '우선처 반품조건 따름', customLabel: '이 상품만 직접 입력',
+        setInherit: () => this.part('prod', { mode: 'inherit' }), setCustom: toCustom('prod', custEff),
+        customOff: false,
+        // 표준거래처가 반품불가면 판매반품금지 체크(全社)는 자동 체크 + 해제 불가
+        salesBan: salesBanEff, salesBanOff: stdLock,
+        onSalesBan: ev => { if (!stdLock) this.setState({ salesBan: ev.target.checked }); },
+        salesBanHint: stdLock ? '표준거래처 반품불가 → 자동 체크 (해제 불가)' : '고객 반품 차단 · 시안에서는 눌러볼 수 있음',
+        salesBanHintStyle: stdLock ? 'color:#B91C1C;font-weight:600' : '',
+        showWarn: prodEff.type === 'ng' && !salesBanEff,
+        showFrom: s.prod.mode === 'inherit',
+        showCopied: s.prod.mode === 'custom' && s.prod.copied !== undefined, copiedText: s.prod.copied ? '※ 우선처 반품조건(거래처 등록 값)을 그대로 가져왔습니다. 다른 부분만 고치세요.' : '※ 우선처에 입력된 반품조건이 없어 빈 칸에서 시작합니다.',
+        fromText: custMode === 'inherit'
+          ? '우선처(10234 예시제약)의 거래처 등록 제약사 반품조건을 따릅니다.'
+          : '우선처(10234 예시제약)의 거래처 등록에서 우리 회사가 직접 입력한 제약사 반품조건을 따릅니다.'
+      })
+    ];
+    const demos = [
+      { label: '표준: 반품불가', run: () => this.load({ std: { type: 'ng' } }) },
+      { label: '표준: 임박3~경과10 20% · 경과10~ 30%', run: () => this.load({}) },
+      { label: '표준: 기간별 10·20·30%', run: () => this.load({ std: { type: 'cond', conds: [mk('exd', { bands: [band({ fs: '임박', fm: '3', ts: '경과', tm: '12', rate: '10' }), band({ fs: '경과', fm: '12', ts: '경과', tm: '24', rate: '20' }), band({ fs: '경과', fm: '24', ts: '경과', tm: '36', rate: '30' })] })] } }) },
+      { label: '표준: 기본5% · 파손10% · 소분 불가', run: () => this.load({ std: { type: 'cond', conds: [mk('exd', { bands: [band({ fs: '제한없음', ts: '제한없음', rate: '5' })] }), mk('st', { rows: ST_ROWS({ dmg: { rate: '10' }, split: { ng: true } }) })] } }) },
+      { label: '표준: 반품한도 1% (현황 보기)', run: () => this.load({ std: { type: 'cond', conds: [mk('lim', { rate: '1' })] } }) },
+      { label: '표준: 경과품만 반품 (공제 없음)', run: () => this.load({ std: { type: 'cond', conds: [mk('exd', { bands: [band({ fs: '경과', fm: '0', ts: '제한없음' })] })] } }) },
+      { label: '표준: 반품가능 + 메모', run: () => this.load({ std: { type: '', etc: '반품 전 영업담당 확인 요망' } }) },
+      { label: '거래처만 직접: 반품불가', run: () => this.load({ cust: { mode: 'custom', type: 'ng', etc: '직거래없음(도도매 매입)' } }) },
+      { label: '상품만 직접: 경과품만 50%', run: () => this.load({ prod: { mode: 'custom', type: 'cond', conds: [mk('exd', { bands: [band({ fs: '경과', fm: '0', ts: '제한없음', rate: '50' })] })] } }) },
+      { label: '상품만 직접: 지정 제조번호 불가 2건', run: () => this.load({ prod: { mode: 'custom', type: 'cond', conds: [mk('lot', { mode: '지정 제조번호 불가', lots: ['A2301', 'B2405'] })] } }) },
+      { label: '처음으로', run: () => this.load({}) }
+    ];
+    return { yes: true, panels: panels, demos: demos };
+  }
+}
+
+dcMount('tpl', 'app', Component);
+</script>
+</body>
+</html>
