@@ -81,13 +81,15 @@ html,body{background:var(--page-bg)}
 .topnav .note{color:var(--nav-dim);margin-left:auto;font-size:12px}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--nav-bg)}
 .stage{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:980px){.ap{grid-template-columns:1fr!important}.ap>div{border-right:none!important;border-bottom:1px solid #b6c2d6}}
+.note{margin-bottom:0!important}
 </style>
 </head>
 <body>
 <nav class="topnav" aria-label="시안 목록"><b>다미스 반품조건 시안</b><a class="nv on" href="index.html">반품정보 시안</a><a class="nv" href="cm3011p.html">CM3011P 표준거래처 일괄수정</a><a class="nv" href="cm3041p.html">CM3041P 거래처 일괄수정</a><a class="nv" href="cm2061p.html">CM2061P 상품 일괄수정</a><a class="nv" href="spec.html">개발자 설계서</a><span class="note">바로 눌러 볼 수 있는 보기 전용 · 예시 데이터</span></nav>
 <div class="stage"><div id="app"></div></div>
 <script type="text/plain" id="tpl">
-<div class="root" style="width:1920px;box-sizing:border-box">
+<div class="root" style="width:100%;max-width:1320px;margin:0 auto;box-sizing:border-box">
   <datalist id="dl-lim"><option value="0.3"></option><option value="0.5"></option><option value="0.8"></option></datalist>
 
   <div class="bar">
@@ -99,9 +101,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     </sc-for>
   </div>
 
-  <div style="display:flex;gap:24px;align-items:flex-start;padding:20px 20px 12px 20px;background:#f4f6fa">
+  <div style="display:flex;flex-direction:column;gap:24px;align-items:stretch;padding:20px 20px 12px 20px;background:#f4f6fa">
     <sc-for list="{{panels}}" as="p" hint-placeholder-count="3">
-      <div class="win" style="width:604px;flex:none;padding-bottom:12px">
+      <div class="win" style="width:100%;box-sizing:border-box;padding-bottom:12px">
         <div class="ttl"><span><b>{{p.no}}</b> {{p.title}}</span><span>{{p.sub}}</span></div>
 
         <sc-if value="{{p.isStd}}" hint-placeholder-val="{{true}}">
@@ -287,7 +289,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     </sc-for>
   </div>
 
-  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;padding:12px 20px 28px 20px;background:#f4f6fa">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;padding:12px 20px 28px 20px;background:#f4f6fa">
     <div class="note" style="display:flex;gap:10px"><span class="step">1</span><div><h3>표준거래처 등록 (기획실 관리)</h3><p>기본정보·추가정보 옆에 ‘제약사 반품조건’ 탭을 새로 만듭니다. 제약사가 우리(동원약품그룹)에게 반품을 받아주는 조건을 그룹 기준으로 한 번 입력합니다.</p></div></div>
     <div class="note" style="display:flex;gap:10px"><span class="step">2</span><div><h3>거래처 등록 (각사)</h3><p>‘표준거래처 반품조건 따름’이면 표준거래처의 제약사 반품조건이 모두 그대로 보입니다(수정 불가). 우리 회사만 다를 때 ‘이 제약사(우선처)만 직접 입력’을 고르면 표준값이 복사되어 고칠 수 있게 됩니다. <b>단, 표준거래처가 반품불가면 직접 입력을 고를 수 없습니다.</b></p></div></div>
     <div class="note" style="display:flex;gap:10px"><span class="step">3</span><div><h3>상품 등록 (각사)</h3><p>‘우선처 반품조건 따름’이면 그 상품 우선처의 거래처 등록 제약사 반품조건을 따릅니다. 거래처가 표준을 따르면 결국 표준거래처 값이 보입니다. 상품만 다를 때만 직접 입력합니다.</p></div></div>

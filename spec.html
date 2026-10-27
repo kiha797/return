@@ -38,13 +38,15 @@ html,body{background:var(--page-bg)}
 .topnav .note{color:var(--nav-dim);margin-left:auto;font-size:12px}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--nav-bg)}
 .stage{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:980px){.ap{grid-template-columns:1fr!important}.ap>div{border-right:none!important;border-bottom:1px solid #b6c2d6}}
+.note{margin-bottom:0!important}
 </style>
 </head>
 <body>
 <nav class="topnav" aria-label="시안 목록"><b>다미스 반품조건 시안</b><a class="nv" href="index.html">반품정보 시안</a><a class="nv" href="cm3011p.html">CM3011P 표준거래처 일괄수정</a><a class="nv" href="cm3041p.html">CM3041P 거래처 일괄수정</a><a class="nv" href="cm2061p.html">CM2061P 상품 일괄수정</a><a class="nv on" href="spec.html">개발자 설계서</a><span class="note">바로 눌러 볼 수 있는 보기 전용 · 예시 데이터</span></nav>
 <div class="stage"><div id="app"></div></div>
 <script type="text/plain" id="tpl">
-<div class="doc" style="width:1100px;box-sizing:border-box;padding:44px 48px 56px 48px">
+<div class="doc" style="width:100%;max-width:1100px;margin:0 auto;box-sizing:border-box;padding:44px 48px 56px 48px">
   <div class="sub" style="margin-bottom:6px">다미스닷넷 · 표준거래처 등록(CM3010E) · 거래처 등록(CM3040E) · 상품 등록(CM2060E) · 5차안</div>
   <h1>제약사 반품조건 표준화 · 개발자용 항목 정의서</h1>
   <p style="margin-top:8px;color:#374151"><b>제약사 반품조건</b>(제약사가 동원약품그룹 유통사의 반품을 받아주는 조건)을 표준거래처(기획실) → 거래처(각사) → 상품(각사) 3단계로 연결하는 안입니다. 고객 반품을 막는 기존 판매반품금지 체크(全社)와는 따로 둡니다. 상품 등록 판매 영역은 기존 항목을 그대로 두고 ‘반품조건설명’ 칸만 바꿉니다. 유팜몰WOS 노출, 표시·적용일·회수는 범위에서 제외했습니다.</p>

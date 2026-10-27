@@ -85,13 +85,15 @@ html,body{background:var(--page-bg)}
 .topnav .note{color:var(--nav-dim);margin-left:auto;font-size:12px}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--nav-bg)}
 .stage{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:980px){.ap{grid-template-columns:1fr!important}.ap>div{border-right:none!important;border-bottom:1px solid #b6c2d6}}
+.note{margin-bottom:0!important}
 </style>
 </head>
 <body>
 <nav class="topnav" aria-label="시안 목록"><b>다미스 반품조건 시안</b><a class="nv" href="index.html">반품정보 시안</a><a class="nv" href="cm3011p.html">CM3011P 표준거래처 일괄수정</a><a class="nv on" href="cm3041p.html">CM3041P 거래처 일괄수정</a><a class="nv" href="cm2061p.html">CM2061P 상품 일괄수정</a><a class="nv" href="spec.html">개발자 설계서</a><span class="note">바로 눌러 볼 수 있는 보기 전용 · 예시 데이터</span></nav>
 <div class="stage"><div id="app"></div></div>
 <script type="text/plain" id="tpl">
-<div class="root" style="width:1920px;box-sizing:border-box;background:#f4f6fa">
+<div class="root" style="width:100%;max-width:1340px;margin:0 auto;box-sizing:border-box;background:#f4f6fa">
 
   <div class="bar">
     <b>CM3041P 거래처 반품정보 일괄수정</b>
@@ -101,8 +103,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     <button class="chip" type="button" onClick="{{reset}}">처음으로</button>
   </div>
 
-  <div style="display:flex;gap:24px;align-items:flex-start;padding:20px">
-    <div class="pw" style="width:1300px;flex:none">
+  <div style="display:flex;flex-direction:column;gap:24px;align-items:stretch;padding:20px">
+    <div class="pw" style="width:100%;box-sizing:border-box">
       <div class="pt"><b>{{w.title}}</b><span>✕</span></div>
       <div class="tb">
         <span class="hint" style="margin-right:auto;align-self:center">{{w.topHint}}</span>
@@ -318,7 +320,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
       <div style="display:flex;justify-content:flex-end;padding:0 6px 6px 6px"><button class="tbtn" type="button">닫기</button></div>
     </div>
 
-    <div style="flex-grow:1;min-width:0">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;min-width:0">
       <div class="note"><h3><span class="step">★</span>어디에 붙나요</h3><p>{{w.where}}</p></div>
       <div class="note"><h3><span class="step">1</span>바꿀 항목만 골라서 바꿉니다</h3><p>예전 일괄수정처럼 ‘항목 1개 + 값 1개’를 고르되, 반품정보는 <b>반품한도만</b>처럼 일부만 바꾸고 나머지 조건은 그대로 둡니다.</p></div>
       <div class="note"><h3><span class="step">2</span>미리 적용 → 확인 → 저장</h3><p>‘미리 적용’을 누르면 바뀔 행이 노란색, ‘변경 후’ 칸에 바뀐 내용이 파란 글씨로 보입니다. 저장 전까지는 언제든 ‘미리 적용 취소’로 되돌릴 수 있습니다.</p></div>
