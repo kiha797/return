@@ -230,6 +230,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
                     </div>
                     <div style="margin-top:5px;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden"><div style="{{c.limBarStyle}}"></div></div>
                     <div class="hint" style="margin-top:3px">{{c.limNote}}</div>
+                    <div class="hint" style="margin-top:3px;padding-top:3px;border-top:1px dashed #d5dbe6">전체 반품액(참고) <b style="color:#334155">{{c.limAll}}</b> · 한도 계산에는 파손 반품만 씁니다</div>
                   </div>
                   </sc-if>
                 </sc-if>
@@ -285,7 +286,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
   </div>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;padding:12px 20px 28px 20px;background:#f4f6fa">
-    <div class="note" style="display:flex;gap:10px"><span class="step">1</span><div><h3>표준거래처 등록 (기획실 관리)</h3><p>기본정보·추가정보 옆에 ‘제약사 반품조건’ 탭을 새로 만듭니다. 제약사가 우리(동원약품그룹)에게 반품을 받아주는 조건을 그룹 기준으로 한 번 입력합니다.</p></div></div>
+    <div class="note" style="display:flex;gap:10px"><span class="step">1</span><div><h3>표준거래처 등록 (기획실 관리)</h3><p>기본정보·추가정보 옆에 ‘반품조건’ 탭을 새로 만듭니다. 제약사가 우리(동원약품그룹)에게 반품을 받아주는 조건을 그룹 기준으로 한 번 입력합니다.</p></div></div>
     <div class="note" style="display:flex;gap:10px"><span class="step">2</span><div><h3>거래처 등록 (각사)</h3><p>‘표준거래처 반품조건 따름’이면 표준거래처의 제약사 반품조건이 모두 그대로 보입니다(수정 불가). 우리 회사만 다를 때 ‘이 제약사(우선처)만 직접 입력’을 고르면 표준값이 복사되어 고칠 수 있게 됩니다. <b>단, 표준거래처가 반품불가면 직접 입력을 고를 수 없습니다.</b></p></div></div>
     <div class="note" style="display:flex;gap:10px"><span class="step">3</span><div><h3>상품 등록 (각사)</h3><p>‘우선처 반품조건 따름’이면 그 상품 우선처의 거래처 등록 제약사 반품조건을 따릅니다. 거래처가 표준을 따르면 결국 표준거래처 값이 보입니다. 상품만 다를 때만 직접 입력합니다.</p></div></div>
     <div class="note" style="display:flex;gap:10px"><span class="step">✓</span><div><h3>판매반품금지(全社)와의 관계</h3><p>제약사 반품조건은 <b>우리 → 제약사</b> 반품, 판매반품금지 체크(全社)는 <b>고객 → 우리</b> 반품을 막는 기존 스위치로 따로 둡니다. <b>표준거래처가 반품불가면 판매반품금지 체크가 자동으로 체크되고 해제할 수 없습니다.</b> 거래처·상품 단계에서만 반품불가인데 판매반품금지가 꺼져 있으면 상품 등록에 주황색 경고가 나옵니다.</p></div></div>
@@ -370,8 +371,9 @@ class Component extends DCLogic {
     const upd = (id, patch) => { if (editable) this.part(key, { conds: this.state[key].conds.map(c => c.id === id ? Object.assign({}, c, patch) : c) }); };
     // 반품한도 현황 (시안 예시 금액 — 실제는 우선처 기준 매입·반품 집계)
     const LIM_DATA = {
-      std:  { scope: '그룹 8개사 합계 · 우선처 10234 예시제약', '연간 매입액': [9860000000, 52300000, '2026년 매입액'], '분기 매입액': [2410000000, 15900000, '2026년 4분기 매입액'], '담당자별 매출액': [3120000000, 21000000, '담당자 매출액 (올해)'] },
-      cust: { scope: '동원약품중부 · 우선처 10234 예시제약', '연간 매입액': [1250000000, 8430000, '2026년 매입액'], '분기 매입액': [318000000, 2950000, '2026년 4분기 매입액'], '담당자별 매출액': [410000000, 3100000, '담당자 매출액 (올해)'] }
+      // [기준 금액, 파손 반품액(한도 계산), 이름표, 전체 반품액(참고)]
+      std:  { scope: '그룹 8개사 합계 · 우선처 10234 예시제약', '연간 매입액': [9860000000, 52300000, '2026년 매입액', 148600000], '분기 매입액': [2410000000, 15900000, '2026년 4분기 매입액', 41200000], '담당자별 매출액': [3120000000, 21000000, '담당자 매출액 (올해)', 57800000] },
+      cust: { scope: '동원약품중부 · 우선처 10234 예시제약', '연간 매입액': [1250000000, 8430000, '2026년 매입액', 23700000], '분기 매입액': [318000000, 2950000, '2026년 4분기 매입액', 7640000], '담당자별 매출액': [410000000, 3100000, '담당자 매출액 (올해)', 8920000] }
     };
     const won = n => Math.round(n).toLocaleString('ko-KR') + '원';
     const limInfo = c => {
@@ -384,7 +386,7 @@ class Component extends DCLogic {
         showLimInfo: key !== 'std',   // 표준거래처 등록에서는 현황 박스를 보이지 않음 (거래처·상품 등록에서만)
         limScope: D.scope + ' · 시안 예시 금액', limBaseLabel: row[2], limBuy: won(buy),
         limCap: cap === null ? '— (% 입력)' : won(cap) + ' (' + c.rate + '%)',
-        limUsed: won(used), limPct: pct.toFixed(2) + '%',
+        limUsed: won(used), limPct: pct.toFixed(2) + '%', limAll: won(row[3]),
         limPctStyle: 'font-weight:700;color:' + col,
         limBarStyle: 'height:8px;background:' + col + ';width:' + Math.min(ratio === null ? pct : ratio, 100).toFixed(1) + '%',
         limNote: cap === null ? '한도 %를 넣으면 한도 금액과 남은 금액이 계산됩니다.'
