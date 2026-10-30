@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>임박·제약사품절</title>
+<style>
+html,body{margin:0;background:#dde4ef;overflow:hidden}
+.root{font-family:"Malgun Gothic","Noto Sans KR",sans-serif;font-size:12px;color:#1c2433;padding:0 10px 1px}
+.gb{position:relative;border:1px solid #9fb0cc;margin-top:16px;padding:14px 10px 8px;background:#e8edf5}
+.gb>.lg{position:absolute;top:-8px;left:10px;background:#dde4ef;padding:0 4px;color:#25406e}
+.r{display:flex;align-items:center;gap:4px;min-height:24px;margin-bottom:4px}
+.lb{width:104px;text-align:right;flex:none;padding-right:4px}
+input[type=text],input[type=month],input[type=date],select{font:inherit;box-sizing:border-box;border:1px solid #8a97ad;background:#fff;height:22px;padding:0 3px}
+input:disabled{background:#d6d9df}
+.btn{font:inherit;border:1px solid #8a97ad;background:#f3f6fb;height:22px;padding:0 6px;cursor:pointer;white-space:nowrap}
+.btn:hover{background:#e3ebf8}
+.box{flex:1;min-width:0;background:#fff;border:1px solid #8a97ad;min-height:22px;padding:2px 4px;box-sizing:border-box}
+.ln{display:flex;gap:6px;align-items:center;white-space:nowrap;overflow:hidden}
+.ln .x{margin-left:auto;color:#6b7280;cursor:pointer;border:none;background:none;font:inherit}
+.red{color:#b91c1c;font-weight:700}.org{color:#c2410c;font-weight:700}.gray{color:#8b93a1}
+.err{color:#b91c1c;margin-left:72px}
+.pbox{flex:1;min-width:0;border:1px solid #8a97ad;background:#f6f8fc;padding:6px 6px 6px 0}
+.lb2{width:64px;text-align:right;flex:none;padding-right:4px}
+.audit{display:flex;align-items:center;gap:4px;margin-top:2px}
+.audit .lb{width:auto;min-width:76px;white-space:nowrap}
+.bx{display:inline-block;background:#d6d9df;border:1px solid #b6bfce;height:20px;line-height:20px;padding:0 4px;box-sizing:border-box}
+.hint{color:#4b5563;font-size:11px}
+.auto2{color:#9a3412;font-weight:700;background:#fff7ed}
+table{border-collapse:collapse;width:100%;background:#fff;margin-top:4px}
+th,td{border:1px solid #b6c2d6;padding:2px 5px;white-space:nowrap;text-align:left}
+th{background:#cfd8e6}
+tr.off td{color:#8b93a1}
+.demo{margin-top:8px;color:#6b7280;font-size:11px;display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="root">
+<div class="gb">
+  <span class="lg">구매, 재고 (기존 항목 그대로 · 當社구매비고만 변경)</span>
+  <div class="r"><span class="lb">일반가</span><input type="text" disabled value="0" style="width:96px;text-align:right"></div>
+  <div class="r"><span class="lb">최종매입가</span><input type="text" value="0" style="width:96px;text-align:right"><input type="text" disabled value="0.00" style="width:80px;text-align:right"> % (일반가 대비)</div>
+  <div class="r" style="color:#1d4ed8;padding-left:108px;min-height:16px">↖최종매입가 0 또는 일반가의 90%이상이면 수정 가능</div>
+  <div class="r"><span class="lb" style="width:auto;padding-left:4px">판매이익 계산용 입출원가 및 매입할인율</span><input type="text" value="0" style="width:80px;text-align:right"><input type="text" value="0.00" style="width:56px;text-align:right"> %</div>
+  <div class="r"><span class="lb"></span><input type="text" disabled style="flex:1"></div>
+  <div class="r"><span class="lb">全社구매금지일</span><select disabled style="width:110px"><option>2999-12-31</option></select></div>
+  <div class="r"><span class="lb">구매금지일</span><select style="width:110px"><option>2999-12-31</option></select></div>
+  <div class="r" style="align-items:flex-start"><span class="lb" style="padding-top:3px">全社구매비고</span><textarea disabled style="flex:1;height:40px;font:inherit;border:1px solid #8a97ad;background:#d6d9df;resize:none"></textarea></div>
+  <div class="r" style="align-items:flex-start"><span class="lb" style="padding-top:6px">當社구매비고</span>
+   <div class="pbox">
+    <div class="r" style="align-items:flex-start"><span class="lb2" style="padding-top:3px">임박</span><div class="box" id="nList"></div></div>
+    <div class="r"><span class="lb2"></span><span>유효기간</span><input type="date" id="nYm" style="width:118px"><button class="btn" id="nAdd">추가</button></div>
+    <div class="err" id="nErr"></div>
+    <div class="r"><span class="lb2">제약사품절</span><div class="box" id="sNow"></div><button class="btn" id="sHist">이력 ▾</button></div>
+    <div id="hist" style="display:none;margin-left:72px">
+      <label class="hint"><input type="checkbox" id="sOld">1년 이전 포함</label>
+      <table><thead><tr><th>기록일</th><th>구분</th><th>입고예정</th><th>비고</th><th>기록자</th></tr></thead><tbody id="sBody"></tbody></table>
+    </div>
+    <div class="r"><span class="lb2"></span><input type="date" id="sEta" style="width:118px"><label style="white-space:nowrap"><input type="checkbox" id="sTbd">미정</label><button class="btn" id="sAdd">등록</button><button class="btn" id="sOff">해제</button></div>
+    <div class="err" id="sErr"></div>
+    <div class="r" style="align-items:flex-start;margin-bottom:0"><span class="lb2" style="padding-top:3px">메모</span><textarea id="pMemo2" style="flex:1;height:40px;font:inherit;border:1px solid #8a97ad;resize:none;box-sizing:border-box">본사 직거래 / 품절 시 대체품 OO정 안내</textarea></div>
+   </div>
+  </div>
+  <div class="r"><span class="lb"></span><label><input type="checkbox"> 재고관리제외(재고수량을 계산하지 않음) 체크</label></div>
+  <div class="r"><span class="lb"></span><label><input type="checkbox"> 異狀재고관리제외 체크</label></div>
+  <div class="r"><span class="lb"></span><label><input type="checkbox"> 로트재고 관리대상 (입출고 전수검사 대상 품목)</label></div>
+  <div class="r"><span class="lb">창고재고위치</span><input type="text" style="width:110px"></div>
+  <div class="r"><span class="lb">분리보관장소</span><select style="width:110px"><option>= 선택 =</option></select> (출하지시서 분리기준 보관장소)</div>
+  <div class="r"><span class="lb">재고실사정책</span><select style="width:110px"><option>= 선택 =</option></select></div>
+  <div class="r" style="margin-bottom:0"><span class="lb">안전재고수량</span><input type="text" value="0" style="width:110px;text-align:right"><button class="btn" style="margin-left:auto">재고관리정보 일괄입력</button></div>
+  <div style="display:none"><div class="r" style="align-items:flex-start"><span class="lb" style="padding-top:3px">구매비고</span><div style="flex:1;min-width:0"><div class="box auto2" id="autoTxt"></div><textarea id="pMemo" style="width:100%;height:40px;box-sizing:border-box;font:inherit;border:1px solid #8a97ad;border-top:0;resize:none" placeholder="구매비고 메모 (임박·제약사품절 공통)">본사 직거래 / 품절 시 대체품 OO정 안내</textarea><div class="hint">윗줄(주황)은 임박·제약사품절에서 자동으로 만들어지는 문구라 고칠 수 없고, 아래 칸이 담당자 메모입니다. 저장하면 두 줄이 합쳐져 기존 구매비고 칸에 들어갑니다.</div></div></div>
+  <div style="border-top:1px solid #c5cedd;margin-top:8px;padding-top:2px">
+    <div class="audit"><span class="lb">최초등록(품절)</span><span class="bx" style="width:90px" id="aRn"></span><span class="bx" style="width:110px" id="aRd"></span></div>
+    <div class="audit"><span class="lb">최종수정(품절)</span><span class="bx" style="width:90px" id="aUn"></span><span class="bx" style="width:110px" id="aUd"></span></div>
+    <div class="hint" style="margin-top:3px">임박: 유효기간(일자)이 오늘부터 6개월 이내인 것만 등록, 지나면 자동 종료 · 제약사품절: 회사별, 입고예정일 경과 또는 이 회사 입고 시 자동 해제(미정은 유지)</div>
+  </div>
+  <div class="demo">시안 확인용 → 기준일 <input type="date" id="today" value="2026-10-30"> 회사 <select id="corp"></select> <button class="btn" id="inbound">이 회사 입고</button> <button class="btn" id="reset">처음 상태로</button></div></div>
+</div>
+</div>
+<script>
+const CORPS=Array.from({length:10},(_,i)=>'회사 '+String(i+1).padStart(2,'0'));
+const USER='김담당';let S;
+function init(){S={near:[{ym:'2027-02-15',dt:'2026-07-11',by:'박담당'}],
+ so:{'회사 01':[{dt:'2025-08-02',tp:'품절',eta:'2025-09-10',tbd:false,by:'최담당'},{dt:'2025-09-11',tp:'해제(예정일 경과)',by:'자동'},
+   {dt:'2026-10-01',tp:'품절',eta:'2026-10-23',tbd:false,by:'이담당'},{dt:'2026-10-15',tp:'품절',eta:'',tbd:true,by:'이담당'}],
+  '회사 02':[{dt:'2026-10-20',tp:'품절',eta:'2026-11-05',tbd:false,by:'박담당'}]}};}
+const $=id=>document.getElementById(id);
+const today=()=>new Date($('today').value+'T00:00:00');
+const fmt=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const corp=()=>$('corp').value;
+const monthEnd=d=>new Date(d+'T00:00:00');
+const plus6=()=>{const t=today();return new Date(t.getFullYear(),t.getMonth()+6,t.getDate());};
+const isNear=ym=>monthEnd(ym)<plus6();
+const short=s=>s.slice(2).replace(/-/g,'.');
+function left(ym){const t=today(),e=monthEnd(ym);if(e<t)return null;return (e.getFullYear()-t.getFullYear())*12+e.getMonth()-t.getMonth()-(e.getDate()<t.getDate()?1:0);}
+const soList=()=>S.so[corp()]||(S.so[corp()]=[]);
+const current=()=>{const L=soList(),l=L[L.length-1];return l&&l.tp==='품절'?l:null;};
+function autoRelease(){const t=fmt(today());for(const c in S.so){const L=S.so[c],l=L[L.length-1];
+  if(l&&l.tp==='품절'&&!l.tbd&&l.eta<t){const d=new Date(l.eta+'T00:00:00');d.setDate(d.getDate()+1);L.push({dt:fmt(d),tp:'해제(예정일 경과)',by:'자동'});}}}
+function fit(){try{parent.postMessage({nearH:document.querySelector('.root').offsetHeight+16},'*');}catch(e){}}
+function render(){autoRelease();
+  const nl=$('nList');nl.innerHTML='';
+  S.near.forEach((n,i)=>{const m=left(n.ym);
+    nl.insertAdjacentHTML('beforeend',`<div class="ln ${m===null?'gray':''}"><span class="${m===null?'':m<3?'red':'org'}">${short(n.ym)}</span><span>${m===null?'종료':m<1?'1개월 미만':m+'개월 남음'}</span><span class="gray">${short(n.dt)} ${n.by}</span><button class="x" data-i="${i}" title="삭제">✕</button></div>`);});
+  if(!S.near.length)nl.innerHTML='<span class="gray">없음</span>';
+  nl.querySelectorAll('.x').forEach(b=>b.onclick=()=>{S.near.splice(+b.dataset.i,1);render();});
+  const c=current();
+  $('sNow').innerHTML=c?`<span class="red">제약사품절</span> · 입고예정 <b>${c.tbd?'미정':c.eta}</b> <span class="gray">(${short(c.dt)} ${c.by})</span>`:'<span class="gray">해당 없음</span>';
+  const all=soList(),f=all[0],l=all[all.length-1];
+  $('aRn').textContent=f?f.by:'';$('aRd').textContent=f?f.dt:'';$('aUn').textContent=l?l.by:'';$('aUd').textContent=l?l.dt:'';
+  const p=S.near.filter(n=>left(n.ym)!==null&&isNear(n.ym)).map(n=>`[임박 ${short(n.ym)}(${short(n.dt)})]`);
+  if(c)p.push(`[제약사품절 ${c.tbd?'미정':c.eta.slice(5).replace('-','/')+' 예정'}(${short(c.dt)})]`);
+  $('autoTxt').textContent=p.join(' ')||'(없음)';
+  const y=today();y.setFullYear(y.getFullYear()-1);
+  const rows=all.slice().reverse().filter(r=>$('sOld').checked||new Date(r.dt+'T00:00:00')>=y);
+  $('sBody').innerHTML=rows.map(r=>`<tr class="${r.tp==='품절'?'':'off'}"><td>${r.dt}</td><td>${r.tp==='품절'?'제약사품절':r.tp}</td><td>${r.tp!=='품절'?'':r.tbd?'미정':r.eta}</td><td>${r.memo||''}</td><td>${r.by}</td></tr>`).join('')||'<tr><td colspan="5" class="gray">기록 없음</td></tr>';
+  fit();
+}
+$('nAdd').onclick=()=>{const ym=$('nYm').value;$('nErr').textContent='';
+  if(!ym)$('nErr').textContent='유효기간(일자)을 선택하세요.';
+  else if(monthEnd(ym)<today())$('nErr').textContent='이미 유효기간이 지났습니다.';
+  else if(!isNear(ym))$('nErr').textContent='유효기간이 오늘부터 6개월 이내인 제품만 등록할 수 있습니다. (기준: '+fmt(plus6())+' 이전)';
+  else if(S.near.some(n=>n.ym===ym))$('nErr').textContent='같은 유효기간이 이미 있습니다.';
+  else S.near.push({ym,dt:fmt(today()),by:USER});
+  render();};
+$('sTbd').onchange=()=>{$('sEta').disabled=$('sTbd').checked;$('sEta').value='';};
+$('sAdd').onclick=()=>{$('sErr').textContent='';const tbd=$('sTbd').checked,eta=$('sEta').value;
+  if(!tbd&&!eta)$('sErr').textContent='입고예정일을 넣거나 미정을 체크하세요.';
+  else if(!tbd&&eta<fmt(today()))$('sErr').textContent='입고예정일이 오늘보다 앞입니다.';
+  else{soList().push({dt:fmt(today()),tp:'품절',eta,tbd,by:USER});
+    $('sEta').value='';$('sTbd').checked=false;$('sEta').disabled=false;}
+  render();};
+$('sOff').onclick=()=>{$('sErr').textContent='';if(!current())$('sErr').textContent='제약사품절 상태가 아닙니다.';else soList().push({dt:fmt(today()),tp:'해제(수동)',memo:'',by:USER});render();};
+$('inbound').onclick=()=>{if(current())soList().push({dt:fmt(today()),tp:'해제(입고)',memo:corp()+' 입고',by:'자동'});render();};
+$('sHist').onclick=()=>{const h=$('hist'),o=h.style.display==='none';h.style.display=o?'block':'none';$('sHist').textContent=o?'이력 ▴':'이력 ▾';fit();};
+$('corp').innerHTML=CORPS.map(c=>`<option>${c}</option>`).join('');
+['corp','today','sOld'].forEach(i=>$(i).onchange=render);
+$('reset').onclick=()=>{$('today').value='2026-10-30';init();render();};
+window.addEventListener('resize',fit);
+init();render();
+</script>
+</body>
+</html>

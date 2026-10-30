@@ -304,6 +304,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
             </div>
           </sc-if>
         </div>
+        <sc-if value="{{p.isProd}}" hint-placeholder-val="{{false}}">
+          <iframe class="near-frame" src="near.html" title="구매, 재고" style="display:block;width:100%;height:560px;border:0"></iframe>
+        </sc-if>
       </div>
     </sc-for>
   </div>
@@ -339,7 +342,7 @@ const KINDS = {
   exd:  { title: '유효기한별 공제', make: () => ({ kind: 'exd', bands: [band({ fs: '임박', fm: '3', ts: '경과', tm: '10' })] }) },
   st:   { title: '상태별 공제·불가', make: () => ({ kind: 'st', rows: ST_ROWS() }) },
   lim:  { title: '반품한도', make: () => ({ kind: 'lim', base: '연간 매입액', rate: '' }) },
-  lot:  { title: '제조일련번호', make: () => ({ kind: 'lot', mode: '출하(매입) 제조번호 일치시만', val: '', lots: [''] }) }
+  lot:  { title: '제조번호·일련번호', make: () => ({ kind: 'lot', mode: '출하(매입) 제조번호 일치시만', val: '', lots: [''] }) }
 };
 const ORDER = ['exd', 'st', 'lim', 'lot'];
 const MULTI = {};
@@ -581,6 +584,12 @@ class Component extends DCLogic {
 }
 
 dcMount('tpl', 'app', Component);
+</script>
+<script>
+window.addEventListener('message', e => {
+  if (!e.data || !e.data.nearH) return;
+  document.querySelectorAll('.near-frame').forEach(f => { if (f.contentWindow === e.source) f.style.height = e.data.nearH + 'px'; });
+});
 </script>
 </body>
 </html>
