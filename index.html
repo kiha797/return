@@ -65,6 +65,15 @@ input[type=text]:focus,select:focus,textarea:focus,button:focus-visible{outline:
 .okmsg{background:#f0fdf4;border:1px solid #86efac;color:#14532d;padding:5px 8px;margin-bottom:8px;font-size:12px}
 .from{background:#fff7ed;border:1px solid #fdba74;color:#7c2d12;padding:5px 8px;margin-bottom:8px;font-size:12px}
 .sum{width:100%;box-sizing:border-box;min-height:40px;border:1px solid #8a97ad;background:#d6d9df;padding:6px;line-height:1.5;color:#111827}
+.unset{background:#fffbeb;border:2px solid #d97706;color:#78350f;padding:7px 9px;margin-bottom:8px;font-size:12px;line-height:1.5}
+.preview{position:relative;border:2px dashed #6b7280;background:repeating-linear-gradient(135deg,#eceef2 0 10px,#e2e5ea 10px 20px);padding:30px 8px 4px 8px;margin:4px 0 10px 0;overflow:hidden}
+.preview>*{opacity:.5;filter:grayscale(1);pointer-events:none}
+.preview::before{content:"표준거래처 등록 내용 · 미리보기 (이 회사에는 아직 적용 안 됨)";position:absolute;top:0;left:0;right:0;background:#4b5563;color:#fff;font-weight:700;font-size:12px;padding:4px 8px}
+.preview::after{content:"미적용";position:absolute;right:14px;bottom:10px;transform:rotate(-12deg);border:3px solid #b91c1c;color:#b91c1c;font-weight:700;font-size:22px;padding:2px 12px;letter-spacing:4px;background:rgba(255,255,255,.75)}
+.modepick{background:#fffbeb;outline:2px dashed #d97706;outline-offset:2px;padding:2px 4px}
+.audit{display:flex;align-items:center;gap:6px;margin-top:6px}
+.audit .lb{width:80px;text-align:left}
+.audit .bx{border:1px solid #8a97ad;background:#d6d9df;height:22px;line-height:20px;box-sizing:border-box;text-align:center;color:#1c2433}
 .note h3{margin:0 0 4px 0;font-size:13px;font-weight:700;color:#111827}
 .note p{margin:0;line-height:1.6;color:#374151}
 .step{flex:none;width:22px;height:22px;border-radius:11px;background:#c2410c;color:#fff;font-weight:700;text-align:center;line-height:22px}
@@ -138,8 +147,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
         <div class="rb">
           <span class="lg">{{p.legend}}</span>
 
+          <sc-if value="{{p.showUnset}}" hint-placeholder-val="{{false}}">
+            <div class="unset"><b>⚠ 아직 이 회사에 반품조건이 적용되지 않았습니다.</b><br>아래 회색 칸은 표준거래처(기획실)에 등록된 반품조건 <b>미리보기</b>이며, 우리 회사에 입력된 값이 아닙니다. 내용을 확인한 뒤 <b>‘표준거래처 반품조건 따름’</b> 또는 <b>‘직접 입력’</b>을 한 번 골라 저장해야 우리 회사 거래처·상품에 적용됩니다.</div>
+          </sc-if>
+
           <sc-if value="{{p.hasMode}}" hint-placeholder-val="{{false}}">
-            <div class="r">
+            <div class="{{p.modeCls}}">
               <label class="ck"><input type="radio" name="{{p.radioName}}" checked="{{p.isInherit}}" onChange="{{p.setInherit}}"> {{p.inheritLabel}}</label>
               <label class="ck"><input type="radio" name="{{p.radioName}}" checked="{{p.isCustom}}" onChange="{{p.setCustom}}" disabled="{{p.customOff}}"> {{p.customLabel}}</label>
             </div>
@@ -155,6 +168,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
             <div class="warn"><b>⚠ 제약사 반품불가 상품입니다.</b> 고객 반품을 받으면 제약사에 돌려보낼 수 없습니다. 위의 <b>판매반품금지 체크(全社)</b>를 확인하세요.</div>
           </sc-if>
 
+          <div class="{{p.bodyCls}}">
           <div class="r">
             <span class="lb" style="width:64px;text-align:left">반품구분</span>
             <sc-for list="{{p.segs}}" as="s" hint-placeholder-count="2">
@@ -275,11 +289,20 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
             <span class="lb" style="width:64px;text-align:left">메모</span>
             <input type="text" value="{{p.etc}}" onChange="{{p.onEtc}}" disabled="{{p.dis}}" maxlength="60" style="flex-grow:1;min-width:140px" placeholder="표준 항목으로 표현할 수 없는 내용 (60자)">
           </div>
+          </div>
 
           <div class="r" style="align-items:flex-start;margin-bottom:0">
             <span class="lb" style="width:64px;text-align:left;margin-top:4px">요약</span>
             <div style="flex-grow:1;min-width:0"><div class="sum">{{p.summary}}</div><div class="hint" style="margin-top:3px">{{p.sumHint}}</div></div>
           </div>
+
+          <sc-if value="{{p.showAudit}}" hint-placeholder-val="{{false}}">
+            <div style="border-top:1px solid #c5cedd;margin-top:8px;padding-top:2px">
+              <div class="audit"><span class="lb">최초등록정보</span><span class="bx" style="width:90px">{{p.regNm}}</span><span class="bx" style="width:170px">{{p.regDt}}</span></div>
+              <div class="audit"><span class="lb">최종수정정보</span><span class="bx" style="width:90px">{{p.updNm}}</span><span class="bx" style="width:170px">{{p.updDt}}</span></div>
+              <div class="hint" style="margin-top:3px">반품조건만의 저장자·저장일시 (거래처·상품 기본정보의 등록·수정정보와 별개)</div>
+            </div>
+          </sc-if>
         </div>
       </div>
     </sc-for>
@@ -287,7 +310,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;padding:12px 20px 28px 20px;background:#f4f6fa">
     <div class="note" style="display:flex;gap:10px"><span class="step">1</span><div><h3>표준거래처 등록 (기획실 관리)</h3><p>기본정보·추가정보 옆에 ‘반품조건’ 탭을 새로 만듭니다. 제약사가 우리(동원약품그룹)에게 반품을 받아주는 조건을 그룹 기준으로 한 번 입력합니다.</p></div></div>
-    <div class="note" style="display:flex;gap:10px"><span class="step">2</span><div><h3>거래처 등록 (각사)</h3><p>‘표준거래처 반품조건 따름’이면 표준거래처의 제약사 반품조건이 모두 그대로 보입니다(수정 불가). 우리 회사만 다를 때 ‘이 제약사(우선처)만 직접 입력’을 고르면 표준값이 복사되어 고칠 수 있게 됩니다. <b>단, 표준거래처가 반품불가면 직접 입력을 고를 수 없습니다.</b></p></div></div>
+    <div class="note" style="display:flex;gap:10px"><span class="step">2</span><div><h3>거래처 등록 (각사)</h3><p><b>처음에는 ‘미확인’ 상태입니다.</b> 표준거래처 반품조건이 자동으로 적용되지 않고, 담당자가 내용을 보고 둘 중 하나를 한 번 골라 저장해야 적용됩니다(그 전까지 그 제약사 상품은 ‘우선처 반품조건 미확인’). ‘표준거래처 반품조건 따름’이면 표준거래처의 제약사 반품조건이 모두 그대로 보입니다(수정 불가). 우리 회사만 다를 때 ‘이 제약사(우선처)만 직접 입력’을 고르면 표준값이 복사되어 고칠 수 있게 됩니다. <b>단, 표준거래처가 반품불가면 직접 입력을 고를 수 없습니다.</b></p></div></div>
     <div class="note" style="display:flex;gap:10px"><span class="step">3</span><div><h3>상품 등록 (각사)</h3><p>‘우선처 반품조건 따름’이면 그 상품 우선처의 거래처 등록 제약사 반품조건을 따릅니다. 거래처가 표준을 따르면 결국 표준거래처 값이 보입니다. 상품만 다를 때만 직접 입력합니다.</p></div></div>
     <div class="note" style="display:flex;gap:10px"><span class="step">✓</span><div><h3>판매반품금지(全社)와의 관계</h3><p>제약사 반품조건은 <b>우리 → 제약사</b> 반품, 판매반품금지 체크(全社)는 <b>고객 → 우리</b> 반품을 막는 기존 스위치로 따로 둡니다. <b>표준거래처가 반품불가면 판매반품금지 체크가 자동으로 체크되고 해제할 수 없습니다.</b> 거래처·상품 단계에서만 반품불가인데 판매반품금지가 꺼져 있으면 상품 등록에 주황색 경고가 나옵니다.</p></div></div>
   </div>
@@ -326,7 +349,7 @@ const isEmpty = d => !d.type && !d.etc && (!d.conds || d.conds.length === 0);
 const cloneData = d => ({ type: d.type, etc: d.etc, conds: (d.conds || []).map(c => Object.assign({}, c, { id: ++UID }, c.bands ? { bands: c.bands.map(b => Object.assign({}, b, { id: ++UID })) } : {}, c.rows ? { rows: c.rows.map(r => Object.assign({}, r)) } : {}, c.lots ? { lots: c.lots.slice() } : {})) });
 const START = () => ({
   std: Object.assign(BLANK(), { type: 'cond', conds: [mk('exd', { bands: USER_EX() })] }),
-  cust: Object.assign(BLANK(), { mode: 'inherit' }),
+  cust: Object.assign(BLANK(), { mode: 'unset' }),   // 각사 담당자가 아직 고르지 않음 = 미확인
   prod: Object.assign(BLANK(), { mode: 'inherit' }),
   salesBan: false
 });
@@ -463,7 +486,7 @@ class Component extends DCLogic {
     const s = START();
     this.setState({
       std: Object.assign(BLANK(), o.std || s.std),
-      cust: Object.assign(BLANK(), { mode: 'inherit' }, o.cust || {}),
+      cust: Object.assign(BLANK(), { mode: 'unset' }, o.cust || {}),
       prod: Object.assign(BLANK(), { mode: 'inherit' }, o.prod || {}),
       salesBan: !!o.salesBan
     });
@@ -472,20 +495,27 @@ class Component extends DCLogic {
     const s = this.state;
     // 표준거래처가 반품불가면 거래처는 직접 입력 불가 (항상 표준 따름)
     const stdLock = s.std.type === 'ng';
-    const custMode = stdLock ? 'inherit' : s.cust.mode;
-    const custEff = custMode === 'inherit' ? s.std : s.cust;
-    const prodEff = s.prod.mode === 'inherit' ? custEff : s.prod;
+    // 거래처 '미확인' : 각사 담당자가 따름/직접 입력을 한 번 골라 저장하기 전에는 표준거래처 값이 자동 적용되지 않음
+    const custUnset = s.cust.mode === 'unset';
+    const custMode = custUnset ? 'unset' : stdLock ? 'inherit' : s.cust.mode;
+    const custEff = custMode === 'custom' ? s.cust : s.std;            // 화면 표시용 (미확인이면 표준 값을 보기만)
+    const custApplied = custUnset ? BLANK() : custEff;                   // 상품에 실제로 넘어가는 값
+    const prodEff = s.prod.mode === 'inherit' ? custApplied : s.prod;
+    const prodUnset = s.prod.mode === 'inherit' && custUnset;
     const salesBanEff = stdLock || s.salesBan;
+    const audit = (picked, a) => picked
+      ? { regNm: a ? a[0] : '(로그인 사용자)', regDt: a ? a[1] : '(저장 일시)', updNm: '(로그인 사용자)', updDt: '(저장 일시)' }
+      : a ? { regNm: a[0], regDt: a[1], updNm: a[2], updDt: a[3] } : { regNm: '', regDt: '', updNm: '', updDt: '' };
     const toCustom = (key, src) => () => {
       const cur = this.state[key];
       if (cur.mode === 'custom') return;
       // 직접 입력으로 바꾸면 윗단계에 입력된 값을 먼저 그대로 가져옴 → 필요한 부분만 고침
-      this.part(key, !isEmpty(src) ? Object.assign({ mode: 'custom', copied: true }, cloneData(src)) : Object.assign(BLANK(), { mode: 'custom', copied: false }));
+      this.part(key, Object.assign(!isEmpty(src) ? Object.assign({ mode: 'custom', copied: true }, cloneData(src)) : Object.assign(BLANK(), { mode: 'custom', copied: false }), { picked: true }));
     };
     const panels = [
       this.panel('std', s.std, true, {
         no: '①', title: '표준거래처 등록 (CM3010E)', sub: '기획실 일괄 관리', legend: '제약사 반품조건',
-        isStd: true, isCust: false, isProd: false, hasMode: false,
+        isStd: true, isCust: false, isProd: false, hasMode: false, showUnset: false, showAudit: false, bodyCls: '',
         showNgNote: s.std.type === 'ng'
       }),
       this.panel('cust', custEff, custMode === 'custom', {
@@ -493,8 +523,14 @@ class Component extends DCLogic {
         isStd: false, isCust: true, isProd: false, hasMode: true, radioName: 'mode-cust',
         isInherit: custMode === 'inherit', isCustom: custMode === 'custom', customOff: stdLock,
         inheritLabel: '표준거래처 반품조건 따름', customLabel: '이 제약사(우선처)만 직접 입력',
-        setInherit: () => this.part('cust', { mode: 'inherit' }), setCustom: () => { if (!stdLock) toCustom('cust', s.std)(); },
-        showFrom: stdLock,
+        setInherit: () => this.part('cust', { mode: 'inherit', picked: true }), setCustom: () => { if (!stdLock) toCustom('cust', s.std)(); },
+        modeCls: custUnset ? 'r modepick' : 'r',
+        bodyCls: custUnset ? 'preview' : '',
+        showUnset: custUnset,
+        summary: custUnset ? '미확인 · 이 회사에 적용된 반품조건 없음' : this.summaryOf(custEff),
+        showAudit: true,
+        ...audit(s.cust.picked, custUnset ? null : ['김담당', '2026-10-12 10:21:05', '이담당', '2026-10-28 16:40:12']),
+        showFrom: stdLock && !custUnset,
         showCopied: custMode === 'custom' && s.cust.copied !== undefined, copiedText: s.cust.copied ? '※ 표준거래처 반품조건을 그대로 가져왔습니다. 다른 부분만 고치세요.' : '※ 표준거래처에 입력된 반품조건이 없어 빈 칸에서 시작합니다.',
         fromText: '표준거래처에서 반품불가로 정한 제약사라 거래처 등록에서 직접 입력할 수 없습니다.'
       }),
@@ -503,8 +539,13 @@ class Component extends DCLogic {
         isStd: false, isCust: false, isProd: true, hasMode: true, radioName: 'mode-prod',
         isInherit: s.prod.mode === 'inherit', isCustom: s.prod.mode === 'custom',
         inheritLabel: '우선처 반품조건 따름', customLabel: '이 상품만 직접 입력',
-        setInherit: () => this.part('prod', { mode: 'inherit' }), setCustom: toCustom('prod', custEff),
+        setInherit: () => this.part('prod', { mode: 'inherit', picked: true }), setCustom: toCustom('prod', custApplied),
         customOff: false,
+        modeCls: 'r', bodyCls: '',
+        summary: prodUnset ? '우선처 반품조건 미확인 (거래처 등록에서 아직 적용하지 않음)' : this.summaryOf(prodEff),
+        ...(prodUnset ? { isFree: false } : {}),
+        showAudit: true,
+        ...audit(s.prod.picked, ['박담당', '2025-03-04 09:12:40', '최담당', '2026-09-30 17:05:18']),
         // 표준거래처가 반품불가면 판매반품금지 체크(全社)는 자동 체크 + 해제 불가
         salesBan: salesBanEff, salesBanOff: stdLock,
         onSalesBan: ev => { if (!stdLock) this.setState({ salesBan: ev.target.checked }); },
@@ -513,7 +554,9 @@ class Component extends DCLogic {
         showWarn: prodEff.type === 'ng' && !salesBanEff,
         showFrom: s.prod.mode === 'inherit',
         showCopied: s.prod.mode === 'custom' && s.prod.copied !== undefined, copiedText: s.prod.copied ? '※ 우선처 반품조건(거래처 등록 값)을 그대로 가져왔습니다. 다른 부분만 고치세요.' : '※ 우선처에 입력된 반품조건이 없어 빈 칸에서 시작합니다.',
-        fromText: custMode === 'inherit'
+        fromText: custUnset
+          ? '우선처(10234 예시제약)의 거래처 등록에서 아직 반품조건을 확인·적용하지 않았습니다. 거래처 등록에서 먼저 골라 저장해야 합니다.'
+          : custMode === 'inherit'
           ? '우선처(10234 예시제약)의 거래처 등록 제약사 반품조건을 따릅니다.'
           : '우선처(10234 예시제약)의 거래처 등록에서 우리 회사가 직접 입력한 제약사 반품조건을 따릅니다.'
       })
@@ -526,6 +569,7 @@ class Component extends DCLogic {
       { label: '표준: 반품한도 1% (현황 보기)', run: () => this.load({ std: { type: 'cond', conds: [mk('lim', { rate: '1' })] } }) },
       { label: '표준: 경과품만 반품 (공제 없음)', run: () => this.load({ std: { type: 'cond', conds: [mk('exd', { bands: [band({ fs: '경과', fm: '0', ts: '제한없음' })] })] } }) },
       { label: '표준: 반품가능 + 메모', run: () => this.load({ std: { type: '', etc: '반품 전 영업담당 확인 요망' } }) },
+      { label: '거래처: 표준 따름 확인 완료', run: () => this.load({ cust: { mode: 'inherit' } }) },
       { label: '거래처만 직접: 반품불가', run: () => this.load({ cust: { mode: 'custom', type: 'ng', etc: '직거래없음(도도매 매입)' } }) },
       { label: '상품만 직접: 경과품만 50%', run: () => this.load({ prod: { mode: 'custom', type: 'cond', conds: [mk('exd', { bands: [band({ fs: '경과', fm: '0', ts: '제한없음', rate: '50' })] })] } }) },
       { label: '상품만 직접: 지정 제조번호 불가 2건', run: () => this.load({ prod: { mode: 'custom', type: 'cond', conds: [mk('lot', { mode: '지정 제조번호 불가', lots: ['A2301', 'B2405'] })] } }) },

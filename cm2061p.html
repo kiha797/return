@@ -210,7 +210,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
           </sc-if>
           <sc-if value="{{w.isCustTab}}" hint-placeholder-val="{{false}}">
             <select value="{{w.item}}" onChange="{{w.onItem}}" style="width:100%;height:26px">
-              <option value="inherit">표준거래처 반품조건 따름으로 되돌리기</option>
+              <option value="inherit">표준거래처 반품조건 적용 (따름 · 미확인 행 확인)</option>
               <option value="type">반품구분 (직접 입력)</option>
               <option value="bands">유효기한별 공제 (직접 입력)</option>
               <option value="st">상태별 공제·불가 (직접 입력)</option>
@@ -287,7 +287,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
           </sc-if>
 
           <sc-if value="{{e.isInherit}}" hint-placeholder-val="{{false}}">
-            <div class="er">선택한 행을 <b style="margin:0 3px">{{e.inheritLabel}}</b>으로 되돌립니다. 직접 입력했던 값은 지워집니다.</div>
+            <div class="er">선택한 행을 <b style="margin:0 3px">{{e.inheritLabel}}</b>으로 바꿉니다. 직접 입력했던 값은 지워집니다.{{e.inheritNote}}</div>
           </sc-if>
 
           <sc-if value="{{e.isDate}}" hint-placeholder-val="{{false}}">
@@ -347,6 +347,7 @@ const clone = d => JSON.parse(JSON.stringify(d));
 const side = (s, m) => s === '제한없음' ? '제한없음' : s + ' ' + (m === '' ? '?' : m) + '개월';
 const bandTxt = b => (b.fs === '제한없음' && b.ts === '제한없음' ? '상관없이' : side(b.fs, b.fm) + ' ~ ' + side(b.ts, b.tm)) + ' ' + (b.rate !== '' && b.rate !== '0' ? b.rate + '% 공제' : '공제 없음');
 function summary(d) {
+  if (d.unset) return '미확인 · 아직 이 회사에 적용 안 됨';
   if (d.none) return '— (미입력)';
   const p = [];
   if (!d.type) p.push('반품가능');
@@ -362,9 +363,9 @@ function summary(d) {
   if (d.memo) p.push('메모: ' + d.memo);
   return p.join(' / ');
 }
-const typeOf = d => d.none ? 'none' : (d.type === 'ng' ? 'ng' : d.type === 'cond' ? 'cd' : 'ok');
-const TYPE_NM = { ng: '반품불가', cd: '조건부반품', ok: '반품가능', none: '미입력' };
-const badge = d => ({ t: TYPE_NM[typeOf(d)], cls: 'bdg ' + (typeOf(d) === 'none' ? 'no' : typeOf(d)), td: 'c' });
+const typeOf = d => d.unset ? 'un' : d.none ? 'none' : (d.type === 'ng' ? 'ng' : d.type === 'cond' ? 'cd' : 'ok');
+const TYPE_NM = { ng: '반품불가', cd: '조건부반품', ok: '반품가능', none: '미입력', un: '미확인' };
+const badge = d => ({ t: TYPE_NM[typeOf(d)], cls: 'bdg ' + (typeOf(d) === 'none' || typeOf(d) === 'un' ? 'no' : typeOf(d)), td: 'c' });
 
 // ---- 예시 데이터 ----
 const STD0 = () => [
@@ -380,7 +381,7 @@ const STD0 = () => [
   { id: '11020', name: '거너제약(주)', d: NONE() },
   { id: '11135', name: '더러바이오(주)', d: D({ type: 'cond', bands: [band({ rate: '20' }), band({ fs: '경과', fm: '10', ts: '제한없음', tm: '', rate: '30' })] }) }
 ];
-const CUST0 = () => STD0().map(s => ({ id: s.id, name: s.name, mode: s.id === '10422' ? 'custom' : 'inherit', d: s.id === '10422' ? D({ type: 'cond', bands: [band({ fs: '제한없음', fm: '', ts: '제한없음', tm: '', rate: '7' })] }) : NONE() }));
+const CUST0 = () => STD0().map(s => ({ id: s.id, name: s.name, mode: s.id === '10422' ? 'custom' : (s.id === '10299' || s.id === '10234' || s.id === '10301') ? 'inherit' : 'unset', d: s.id === '10422' ? D({ type: 'cond', bands: [band({ fs: '제한없음', fm: '', ts: '제한없음', tm: '', rate: '7' })] }) : NONE() }));
 const PROD0 = () => [
   ['40810', '10299', '가브스메트정50/1000mg', '60정(PTP)', '전문', '보험'],
   ['48839', '10299', '가브스메트정50/500mg', '60정(PTP)', '전문', '보험'],
@@ -397,7 +398,7 @@ const ED0 = () => ({ dc: '', dcClear: false, type: 'cond', bands: [band({ rate: 
 const RTN_ITEMS = { inherit: true, type: true, bands: true, st: true, lim: true };
 const W0 = (rows, item) => ({ rows: rows, pend: {}, skip: {}, sel: {}, quick: 'all', q: '', item: item, ed: ED0(), msg: '', msgCls: 'msg' });
 
-const ITEM_HINT = { puDate: '기존 항목 (구매금지일자)', dc: '기존 항목 (매입할인율)', type: '반품불가 · 조건부반품 · 반품가능', bands: '선택한 행의 유효기한별 공제를 이 표로 바꿈', st: '파손품 · 소분·낱개', lim: '반품한도만 바꿈 (다른 조건 그대로)', memo: '메모만 바꿈', copy: '원본의 반품조건 전체를 그대로 복사', inherit: '직접 입력을 지우고 윗단계 조건을 따름', ban: '고객 → 우리 반품 차단', rtnDate: '기존 항목 (반품금지일자)', saleDate: '기존 항목 (판매금지일자)' };
+const ITEM_HINT = { puDate: '기존 항목 (구매금지일자)', dc: '기존 항목 (매입할인율)', type: '반품불가 · 조건부반품 · 반품가능', bands: '선택한 행의 유효기한별 공제를 이 표로 바꿈', st: '파손품 · 소분·낱개', lim: '반품한도만 바꿈 (다른 조건 그대로)', memo: '메모만 바꿈', copy: '원본의 반품조건 전체를 그대로 복사', inherit: '윗단계 조건을 따름 (거래처 미확인 행은 이때 처음 적용)', ban: '고객 → 우리 반품 차단', rtnDate: '기존 항목 (반품금지일자)', saleDate: '기존 항목 (판매금지일자)' };
 
 class Component extends DCLogic {
   constructor(props) {
@@ -413,7 +414,8 @@ class Component extends DCLogic {
   // 거래처 실제 값 (표준 반품불가면 항상 표준)
   custEff(id, row) {
     const std = this.stdOf(id);
-    if (std.type === 'ng' || !row || row.mode === 'inherit') return std;
+    if (!row || row.mode === 'unset') return Object.assign(NONE(), { unset: true });   // 담당자가 한 번 골라 저장하기 전에는 표준 값 자동 적용 안 함
+    if (std.type === 'ng' || row.mode === 'inherit') return std;
     return row.d;
   }
   custRow(id) { const c = this.state.cust.rows.find(x => x.id === id); return c ? (this.state.cust.pend[id] || c) : null; }
@@ -423,7 +425,7 @@ class Component extends DCLogic {
   applyOne(tab, row, item, ed, wst) {
     const nr = clone(row);
     const isStdNg = tab !== 'std' && this.stdOf(tab === 'cust' ? row.id : row.prior).type === 'ng';
-    const base = tab === 'std' ? row.d : (tab === 'cust' ? this.custEff(row.id, row) : this.prodEff(row));
+    const base = tab === 'std' ? row.d : (tab === 'cust' ? (row.mode === 'unset' ? this.stdOf(row.id) : this.custEff(row.id, row)) : this.prodEff(row));
     const edit = fn => { const d = clone(base); d.none = false; fn(d); nr.d = d; if (tab !== 'std') nr.mode = 'custom'; return nr; };
     if (tab === 'cust' && isStdNg && item !== 'inherit') return { skip: '표준거래처 반품불가 (직접 입력 불가)' };
     if (item === 'inherit') { if (row.mode === 'inherit') return { skip: '이미 따름' }; nr.mode = 'inherit'; nr.d = NONE(); return nr; }
@@ -456,6 +458,7 @@ class Component extends DCLogic {
     const tOf = r => typeOf(orig(r));
     const quickDefs = [['all', '전체'], ['ng', '반품불가'], ['cd', '조건부반품'], ['ok', '반품가능'], ['none', '미입력']];
     if (tab !== 'std') quickDefs.push(['custom', '직접 입력']);
+    if (tab !== 'std') quickDefs.push(['un', tab === 'cust' ? '미확인' : '우선처 미확인']);
     if (tab === 'prod') quickDefs.push(['mis', '불일치 (제약사 반품불가 + 판매반품금지 해제)']);
     const qtest = (k, r) => k === 'all' || (k === 'custom' ? r.mode === 'custom' : k === 'mis' ? (tOf(r) === 'ng' && !r.ban) : tOf(r) === k);
     // CM2061P 조회구분 (기존과 같음) : 금지일자가 오늘 이전이면 금지된 것
@@ -472,14 +475,14 @@ class Component extends DCLogic {
     const selIds = W.rows.filter(r => W.sel[r.id]).map(r => r.id);
     const pendCnt = Object.keys(W.pend).length;
 
-    const modeTxt = r => { if (tab === 'cust' && this.stdOf(r.id).type === 'ng') return '따름 🔒'; return r.mode === 'inherit' ? (tab === 'cust' ? '표준 따름' : '우선처 따름') : '직접 입력'; };
+    const modeTxt = r => { if (tab === 'cust' && r.mode === 'unset') return '미확인'; if (tab === 'cust' && this.stdOf(r.id).type === 'ng') return '따름 🔒'; return r.mode === 'inherit' ? (tab === 'cust' ? '표준 따름' : '우선처 따름') : '직접 입력'; };
     let cols, cellsOf;
     if (tab === 'std') {
       cols = [['표준거래처코드', 100], ['제약사명', 130], ['반품구분', 86], ['반품조건 (현재)', 420], ['변경 후', 0]];
       cellsOf = r => [{ t: r.id, td: 'c' }, { t: r.name }, badge(r.d), { t: summary(r.d) }];
     } else if (tab === 'cust') {
       cols = [['거래처코드', 90], ['거래처명', 120], ['적용방식', 90], ['반품구분', 86], ['반품조건 (현재)', 380], ['변경 후', 0]];
-      cellsOf = r => [{ t: r.id, td: 'c' }, { t: r.name }, { t: modeTxt(r), td: 'c', cls: this.stdOf(r.id).type === 'ng' ? 'lock' : '' }, badge(orig(r)), { t: summary(orig(r)) }];
+      cellsOf = r => [{ t: r.id, td: 'c' }, { t: r.name }, { t: modeTxt(r), td: 'c', cls: r.mode === 'unset' ? 'skiptx' : this.stdOf(r.id).type === 'ng' ? 'lock' : '' }, badge(orig(r)), { t: r.mode === 'unset' ? '미확인 · 표준거래처: ' + summary(this.stdOf(r.id)) : summary(orig(r)) }];
     } else {
       cols = [['코드', 52], ['제약사', 96], ['상품명', 140], ['규격', 74], ['전문', 36], ['보험', 36], ['반품금지일자', 84], ['매입할인율', 64], ['판매반품금지(全社·보기)', 120], ['적용방식', 72], ['반품구분', 76], ['반품조건 (현재)', 200], ['변경 후', 0]];
       cellsOf = r => {
@@ -496,7 +499,7 @@ class Component extends DCLogic {
       if (!p) return { t: '' };
       const x = [];
       const effP = tab === 'std' ? p.d : tab === 'cust' ? this.custEff(r.id, p) : this.prodEff(p);
-      if (p.mode !== r.mode && p.mode === 'inherit') x.push('[따름] ' + summary(effP));
+      if (p.mode !== r.mode && p.mode === 'inherit') x.push((r.mode === 'unset' ? '[적용] ' : '[따름] ') + summary(effP));
       else if (summary(effP) !== summary(orig(r)) || p.mode !== r.mode) x.push(summary(effP));
       if (tab === 'prod') {
         if (p.rtnDate !== r.rtnDate) x.push('반품금지일자 → ' + p.rtnDate);
@@ -540,6 +543,7 @@ class Component extends DCLogic {
       copyOpts: [{ v: '', t: '— 원본을 고르세요 —' }].concat(W.rows.map(r => ({ v: r.id, t: r.id + ' ' + r.name }))),
       copySum: copyEff ? summary(copyEff) : '(아직 고르지 않음)',
       inheritLabel: tab === 'cust' ? '표준거래처 반품조건 따름' : '우선처 반품조건 따름',
+      inheritNote: tab === 'cust' ? ' 미확인 행은 이때 처음으로 표준거래처 반품조건이 적용되고, 적용한 사람·일시가 기록됩니다.' : '',
       date: E.date, onDate: ev => this.ed({ date: ev.target.value })
     };
 
