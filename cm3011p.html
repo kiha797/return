@@ -414,10 +414,13 @@ class Component extends DCLogic {
   // 거래처 실제 값 (표준 반품불가면 항상 표준)
   custEff(id, row) {
     const std = this.stdOf(id);
-    if (!row || row.mode === 'unset') return Object.assign(NONE(), { unset: true });   // 담당자가 한 번 골라 저장하기 전에는 표준 값 자동 적용 안 함
+    if (!row || row.mode === 'unset') return this.stdFree(id) ? std : Object.assign(NONE(), { unset: true });   // 표준이 반품가능이면 확인 없이 바로 따름   // 담당자가 한 번 골라 저장하기 전에는 표준 값 자동 적용 안 함
     if (std.type === 'ng' || row.mode === 'inherit') return std;
     return row.d;
   }
+  // 표준거래처가 반품가능(반품구분 선택 안 함) → 거래처 미확인 없이 자동 따름
+  stdFree(id) { const s = this.stdOf(id); return !s.none && !s.type; }
+  custUnset(row) { return row.mode === 'unset' && !this.stdFree(row.id); }
   custRow(id) { const c = this.state.cust.rows.find(x => x.id === id); return c ? (this.state.cust.pend[id] || c) : null; }
   prodEff(row) { return row.mode === 'inherit' ? this.custEff(row.prior, this.custRow(row.prior)) : row.d; }
 
@@ -425,7 +428,7 @@ class Component extends DCLogic {
   applyOne(tab, row, item, ed, wst) {
     const nr = clone(row);
     const isStdNg = tab !== 'std' && this.stdOf(tab === 'cust' ? row.id : row.prior).type === 'ng';
-    const base = tab === 'std' ? row.d : (tab === 'cust' ? (row.mode === 'unset' ? this.stdOf(row.id) : this.custEff(row.id, row)) : this.prodEff(row));
+    const base = tab === 'std' ? row.d : (tab === 'cust' ? (this.custUnset(row) ? this.stdOf(row.id) : this.custEff(row.id, row)) : this.prodEff(row));
     const edit = fn => { const d = clone(base); d.none = false; fn(d); nr.d = d; if (tab !== 'std') nr.mode = 'custom'; return nr; };
     if (tab === 'cust' && isStdNg && item !== 'inherit') return { skip: '표준거래처 반품불가 (직접 입력 불가)' };
     if (item === 'inherit') { if (row.mode === 'inherit') return { skip: '이미 따름' }; nr.mode = 'inherit'; nr.d = NONE(); return nr; }
@@ -475,14 +478,14 @@ class Component extends DCLogic {
     const selIds = W.rows.filter(r => W.sel[r.id]).map(r => r.id);
     const pendCnt = Object.keys(W.pend).length;
 
-    const modeTxt = r => { if (tab === 'cust' && r.mode === 'unset') return '미확인'; if (tab === 'cust' && this.stdOf(r.id).type === 'ng') return '따름 🔒'; return r.mode === 'inherit' ? (tab === 'cust' ? '표준 따름' : '우선처 따름') : '직접 입력'; };
+    const modeTxt = r => { if (tab === 'cust' && r.mode === 'unset') return this.stdFree(r.id) ? '표준 따름 (자동)' : '미확인'; if (tab === 'cust' && this.stdOf(r.id).type === 'ng') return '따름 🔒'; return r.mode === 'inherit' ? (tab === 'cust' ? '표준 따름' : '우선처 따름') : '직접 입력'; };
     let cols, cellsOf;
     if (tab === 'std') {
       cols = [['표준거래처코드', 100], ['제약사명', 130], ['반품구분', 86], ['반품조건 (현재)', 420], ['변경 후', 0]];
       cellsOf = r => [{ t: r.id, td: 'c' }, { t: r.name }, badge(r.d), { t: summary(r.d) }];
     } else if (tab === 'cust') {
       cols = [['거래처코드', 90], ['거래처명', 120], ['적용방식', 90], ['반품구분', 86], ['반품조건 (현재)', 380], ['변경 후', 0]];
-      cellsOf = r => [{ t: r.id, td: 'c' }, { t: r.name }, { t: modeTxt(r), td: 'c', cls: r.mode === 'unset' ? 'skiptx' : this.stdOf(r.id).type === 'ng' ? 'lock' : '' }, badge(orig(r)), { t: r.mode === 'unset' ? '미확인 · 표준거래처: ' + summary(this.stdOf(r.id)) : summary(orig(r)) }];
+      cellsOf = r => [{ t: r.id, td: 'c' }, { t: r.name }, { t: modeTxt(r), td: 'c', cls: this.custUnset(r) ? 'skiptx' : this.stdOf(r.id).type === 'ng' ? 'lock' : '' }, badge(orig(r)), { t: this.custUnset(r) ? '미확인 · 표준거래처: ' + summary(this.stdOf(r.id)) : summary(orig(r)) }];
     } else {
       cols = [['코드', 52], ['제약사', 96], ['상품명', 140], ['규격', 74], ['전문', 36], ['보험', 36], ['반품금지일자', 84], ['매입할인율', 64], ['판매반품금지(全社·보기)', 120], ['적용방식', 72], ['반품구분', 76], ['반품조건 (현재)', 200], ['변경 후', 0]];
       cellsOf = r => {
@@ -499,7 +502,7 @@ class Component extends DCLogic {
       if (!p) return { t: '' };
       const x = [];
       const effP = tab === 'std' ? p.d : tab === 'cust' ? this.custEff(r.id, p) : this.prodEff(p);
-      if (p.mode !== r.mode && p.mode === 'inherit') x.push((r.mode === 'unset' ? '[적용] ' : '[따름] ') + summary(effP));
+      if (p.mode !== r.mode && p.mode === 'inherit') x.push((tab === 'cust' && this.custUnset(r) ? '[적용] ' : '[따름] ') + summary(effP));
       else if (summary(effP) !== summary(orig(r)) || p.mode !== r.mode) x.push(summary(effP));
       if (tab === 'prod') {
         if (p.rtnDate !== r.rtnDate) x.push('반품금지일자 → ' + p.rtnDate);
