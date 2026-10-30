@@ -70,6 +70,7 @@ input[type=text]:focus,select:focus,textarea:focus,button:focus-visible{outline:
 .preview>*{opacity:.5;filter:grayscale(1);pointer-events:none}
 .preview::before{content:"표준거래처 등록 내용 · 미리보기 (이 회사에는 아직 적용 안 됨)";position:absolute;top:0;left:0;right:0;background:#4b5563;color:#fff;font-weight:700;font-size:12px;padding:4px 8px}
 .preview::after{content:"미적용";position:absolute;right:14px;bottom:10px;transform:rotate(-12deg);border:3px solid #b91c1c;color:#b91c1c;font-weight:700;font-size:22px;padding:2px 12px;letter-spacing:4px;background:rgba(255,255,255,.75)}
+.preview.nostamp::after{display:none}
 .modepick{background:#fffbeb;outline:2px dashed #d97706;outline-offset:2px;padding:2px 4px}
 .audit{display:flex;align-items:center;gap:6px;margin-top:6px}
 .audit .lb{width:80px;text-align:left}
@@ -525,7 +526,8 @@ class Component extends DCLogic {
         inheritLabel: '표준거래처 반품조건 따름', customLabel: '이 제약사(우선처)만 직접 입력',
         setInherit: () => this.part('cust', { mode: 'inherit', picked: true }), setCustom: () => { if (!stdLock) toCustom('cust', s.std)(); },
         modeCls: custUnset ? 'r modepick' : 'r',
-        bodyCls: custUnset ? 'preview' : '',
+        // 표준이 반품가능(반품구분 선택 안 함)이면 '미적용' 표시는 생략
+        bodyCls: custUnset ? (s.std.type ? 'preview' : 'preview nostamp') : '',
         showUnset: custUnset,
         summary: custUnset ? '미확인 · 이 회사에 적용된 반품조건 없음' : this.summaryOf(custEff),
         showAudit: true,
