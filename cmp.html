@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>계열사 반품조건 비교</title>
+<style>
+body{margin:0;font:12px "Malgun Gothic",sans-serif;color:#222;background:transparent}
+.root{padding:2px 0 4px}
+.strip{display:flex;align-items:center;gap:3px;flex-wrap:wrap;border:1px solid #b9c3d3;background:#f7f9fc;padding:3px 5px;border-radius:2px}
+.cap{font-weight:bold;color:#33507a;margin-right:4px;white-space:nowrap}
+.chip{text-align:center;padding:0 3px;border-radius:2px;border:1px solid;cursor:default;line-height:16px;white-space:nowrap;user-select:none}
+.s{background:#e6f4ea;border-color:#8cc59b;color:#1e6b34}
+.d{background:#fff1e0;border-color:#f0a24a;color:#a5560b;cursor:pointer;font-weight:bold}
+.n{background:#fff;border-color:#c9c9c9;color:#999;border-style:dashed}
+.me{outline:2px solid #33507a;outline-offset:0}
+.cnt{margin-left:auto;color:#555;white-space:nowrap}
+.cnt b{font-weight:bold}
+.pop{margin-top:3px;border:1px solid #f0a24a;background:#fffaf3;padding:4px 6px;display:none}
+.pop.on{display:block}
+.pop table{border-collapse:collapse;width:100%}
+.pop th,.pop td{border:1px solid #e3d3bd;padding:2px 5px;text-align:left}
+.pop th{background:#fbead2;font-weight:normal;width:110px}
+.pop .x{float:right;cursor:pointer;color:#a5560b}
+</style></head><body>
+<div class="root" id="root">
+  <div class="strip" id="strip"><span class="cap">각사조건</span></div>
+  <div class="pop" id="pop"></div>
+</div>
+<script>
+// 예시 데이터 · 현재 회사 = 중부
+const me = '중부';
+const base = {'유효기한별 공제':'임박 3개월 ~ 경과 10개월 : 30%', '상태별 공제·불가':'개봉 50% · 훼손 불가'};
+const corps = [
+  ['동원약품','s'],['아이팜코리아','s'],['원주','s'],['중부','s'],['남부','d',{'유효기한별 공제':'임박 6개월 ~ 경과 6개월 : 20%'}],
+  ['아산','s'],['동원아이팜','n'],['동원HC','d',{'상태별 공제·불가':'개봉 불가 · 훼손 불가'}],['의정부','s'],['제주','n']
+];
+const strip = document.getElementById('strip'), pop = document.getElementById('pop');
+const tip = {s:'우리 회사와 같음', d:'다름 · 눌러서 다른 항목만 보기', n:'반품조건 미입력'};
+let cnt = {s:0,d:0,n:0};
+corps.forEach(([c,st,diff]) => {
+  if (c !== me) cnt[st]++;
+  const el = document.createElement('span');
+  el.className = 'chip ' + st + (c === me ? ' me' : '');
+  el.textContent = (st==='s'?'= ':st==='d'?'≠ ':'– ') + c;
+  el.title = c === me ? '현재 회사' : tip[st];
+  if (st === 'd') el.onclick = () => show(c, diff);
+  strip.appendChild(el);
+});
+const sum = document.createElement('span');
+sum.className = 'cnt';
+sum.innerHTML = '같음 <b style="color:#1e6b34">'+cnt.s+'</b> · 다름 <b style="color:#a5560b">'+cnt.d+'</b> · 미입력 <b style="color:#999">'+cnt.n+'</b>';
+strip.appendChild(sum);
+function show(c, diff){
+  if (pop.dataset.c === c && pop.classList.contains('on')) { pop.classList.remove('on'); return fit(); }
+  pop.dataset.c = c;
+  pop.innerHTML = '<span class="x" onclick="pop.classList.remove(\'on\');fit()">✕</span><b>'+c+'</b> · 다른 항목만 (유효기한별 공제 / 상태별 공제·불가 비교)<table><tr><th>항목</th><th>우리('+me+')</th><th>'+c+'</th></tr>' +
+    Object.keys(diff).map(k => '<tr><th>'+k+'</th><td>'+base[k]+'</td><td><b>'+diff[k]+'</b></td></tr>').join('') + '</table>';
+  pop.classList.add('on'); fit();
+}
+function fit(){ parent.postMessage({nearH: document.getElementById('root').offsetHeight + 2}, '*'); }
+window.onload = fit;
+</script>
+</body></html>
