@@ -148,7 +148,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
           <span class="lg">{{p.legend}}</span>
 
           <sc-if value="{{p.showUnset}}" hint-placeholder-val="{{false}}">
-            <div class="unset"><b>⚠ 아직 이 회사에 반품조건이 적용되지 않았습니다.</b><br>아래 회색 칸은 표준거래처(기획실)에 등록된 반품조건 <b>미리보기</b>이며, 우리 회사에 입력된 값이 아닙니다. 내용을 확인한 뒤 <b>‘표준거래처 반품조건 따름’</b> 또는 <b>‘직접 입력’</b>을 한 번 골라 저장해야 우리 회사 거래처·상품에 적용됩니다.</div>
+            <div class="unset"><b style="font-size:14px">⚠ 반품조건을 최초 1번 입력하셔야 합니다.</b><br>아래 <b>따름</b> / <b>직접 입력</b> 중 하나를 골라 저장하세요. <span style="color:#888">(회색 칸은 표준거래처 미리보기)</span></div>
           </sc-if>
 
           <sc-if value="{{p.hasMode}}" hint-placeholder-val="{{false}}">
