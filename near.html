@@ -85,16 +85,16 @@ tr.off td{color:#8b93a1}
     <div class="audit"><span class="lb">최종수정(품절)</span><span class="bx" style="width:90px" id="aUn"></span><span class="bx" style="width:110px" id="aUd"></span></div>
     <div class="hint" style="margin-top:3px">임박: 유효기간(일자)이 오늘부터 6개월 이내인 것만 등록, 지나면 자동 종료 · 제약사품절: 회사별, 입고예정일 경과 또는 이 회사 입고 시 자동 해제(미정은 유지)</div>
   </div>
-  <div class="demo">시안 확인용 → 기준일 <input type="date" id="today" value="2026-10-30"> 회사 <select id="corp"></select> <button class="btn" id="inbound">이 회사 입고</button> <button class="btn" id="reset">처음 상태로</button></div></div>
+  <div class="demo" id="demo">시안 확인용 → 기준일 <input type="date" id="today" value="2026-10-30"> 회사 <select id="corp"></select> <button class="btn" id="inbound">이 회사 입고</button> <button class="btn" id="reset">처음 상태로</button></div></div>
 </div>
 </div>
 <script>
-const CORPS=Array.from({length:10},(_,i)=>'회사 '+String(i+1).padStart(2,'0'));
+const CORPS=['중부','동원약품','아이팜코리아','원주','남부','아산','동원아이팜','동원HC','의정부','제주'];
 const USER='김담당';let S;
 function init(){S={near:[{ym:'2027-02-15',dt:'2026-07-11',by:'박담당'}],
- so:{'회사 01':[{dt:'2025-08-02',tp:'품절',eta:'2025-09-10',tbd:false,by:'최담당'},{dt:'2025-09-11',tp:'해제(예정일 경과)',by:'자동'},
+ so:{'중부':[{dt:'2025-08-02',tp:'품절',eta:'2025-09-10',tbd:false,by:'최담당'},{dt:'2025-09-11',tp:'해제(예정일 경과)',by:'자동'},
    {dt:'2026-10-01',tp:'품절',eta:'2026-10-23',tbd:false,by:'이담당'},{dt:'2026-10-15',tp:'품절',eta:'',tbd:true,by:'이담당'}],
-  '회사 02':[{dt:'2026-10-20',tp:'품절',eta:'2026-11-05',tbd:false,by:'박담당'}]}};}
+  '남부':[{dt:'2026-10-20',tp:'품절',eta:'2026-11-05',tbd:false,by:'박담당'}]}};}
 const $=id=>document.getElementById(id);
 const today=()=>new Date($('today').value+'T00:00:00');
 const fmt=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -125,6 +125,7 @@ function render(){autoRelease();
   const y=today();y.setFullYear(y.getFullYear()-1);
   const rows=all.slice().reverse().filter(r=>$('sOld').checked||new Date(r.dt+'T00:00:00')>=y);
   $('sBody').innerHTML=rows.map(r=>`<tr class="${r.tp==='품절'?'':'off'}"><td>${r.dt}</td><td>${r.tp==='품절'?'제약사품절':r.tp}</td><td>${r.tp!=='품절'?'':r.tbd?'미정':r.eta}</td><td>${r.memo||''}</td><td>${r.by}</td></tr>`).join('')||'<tr><td colspan="5" class="gray">기록 없음</td></tr>';
+  const st=$('demoSt');if(st)st.innerHTML='전사 현황: '+CORPS.map(k=>{const L=S.so[k]||[],l=L[L.length-1];const on=l&&l.tp==='품절';return `<span style="margin-right:6px;${k===corp()?'font-weight:700;text-decoration:underline;':''}color:${on?'#b91c1c':'#15803d'}">${k} ${on?'품절':'해제'}</span>`;}).join('');
   fit();
 }
 $('nAdd').onclick=()=>{const ym=$('nYm').value;$('nErr').textContent='';
@@ -138,11 +139,12 @@ $('sTbd').onchange=()=>{$('sEta').disabled=$('sTbd').checked;$('sEta').value='';
 $('sAdd').onclick=()=>{$('sErr').textContent='';const tbd=$('sTbd').checked,eta=$('sEta').value;
   if(!tbd&&!eta)$('sErr').textContent='입고예정일을 넣거나 미정을 체크하세요.';
   else if(!tbd&&eta<fmt(today()))$('sErr').textContent='입고예정일이 오늘보다 앞입니다.';
-  else{soList().push({dt:fmt(today()),tp:'품절',eta,tbd,by:USER});
+  else{CORPS.forEach(c=>(S.so[c]||(S.so[c]=[])).push({dt:fmt(today()),tp:'품절',eta,tbd,by:USER,memo:corp()+' 등록 → 전사 동기화'}));   // 全社: 한 회사에서 등록하면 10개사 모두 같은 내용으로 등록
     setEta('',false);}
   render();};
-$('sOff').onclick=()=>{$('sErr').textContent='';if(!current())$('sErr').textContent='제약사품절 상태가 아닙니다.';else soList().push({dt:fmt(today()),tp:'해제(수동)',memo:'',by:USER});render();};
-$('inbound').onclick=()=>{if(current())soList().push({dt:fmt(today()),tp:'해제(입고)',memo:corp()+' 입고',by:'자동'});render();};
+$('sOff').onclick=()=>{$('sErr').textContent='';if(!current())$('sErr').textContent='제약사품절 상태가 아닙니다.';else soList().push({dt:fmt(today()),tp:'해제(수동)',memo:'',by:USER});render();};   // 수동 해제는 그 회사만
+$('inbound').onclick=()=>{if(current())   // 입고는 그 회사만 해제 (나머지 회사는 예정일 경과·수동 해제까지 유지)
+  soList().push({dt:fmt(today()),tp:'해제(입고)',memo:corp()+' 입고',by:'자동'});render();};
 $('corp').innerHTML=CORPS.map(c=>`<option>${c}</option>`).join('');
 ['corp','today','sOld'].forEach(i=>$(i).onchange=render);
 $('reset').onclick=()=>{$('today').value='2026-10-30';init();render();};
@@ -161,6 +163,7 @@ $('cal').onclick=e=>{e.stopPropagation();const b=e.target;
 document.addEventListener('click',e=>{if(!e.target.closest('.dp'))$('cal').style.display='none';});
 window.addEventListener('resize',fit);
 init();render();
+if(location.search.indexOf('demo')>=0){const d=$('demo');d.insertAdjacentHTML('beforeend','<div id="demoSt" style="width:100%;margin-top:4px"></div>');d.style.cssText+=';border:1px dashed #c2410c;padding:6px;background:#fff7ed;color:#7c2d12;font-size:12px';document.querySelector('.root').appendChild(d);render();}
 </script>
 </body>
 </html>
