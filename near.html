@@ -63,15 +63,15 @@ tr.off td{color:#8b93a1}
    <div class="pbox">
     <div class="ln2"><span class="tag t1">임박</span><div class="box" id="nList"></div><input type="date" id="nYm" title="유효기간" style="width:112px"><button class="btn" id="nAdd" title="임박 추가">+</button></div>
     <div class="err" id="nErr"></div>
-    <div class="ln2"><span class="tag t2">제약사품절</span><div class="box ln" style="padding-right:2px"><span id="sNow" style="overflow:hidden;text-overflow:ellipsis"></span><button class="x" id="sHist" title="최근 1년 이력" style="margin-left:auto">이력▾</button><button class="x" id="sOff" title="제약사품절 해제">✕</button></div><span class="dp"><input type="text" id="sEtaTxt" readonly placeholder="입고예정일 ▾" style="width:112px;cursor:pointer"><span class="cal" id="cal"></span></span><input type="hidden" id="sEta"><input type="checkbox" id="sTbd" hidden><button class="btn" id="sAdd">등록</button></div>
-    <div class="err" id="sErr"></div>
-    <div id="hist" style="display:none;margin:0 0 4px 64px">
-      <label class="hint"><input type="checkbox" id="sOld">1년 이전 포함</label>
-      <table><thead><tr><th>기록일</th><th>구분</th><th>입고예정</th><th>비고</th><th>기록자</th></tr></thead><tbody id="sBody"></tbody></table>
-    </div>
     <textarea id="pMemo2" placeholder="메모" style="width:100%;height:64px;font:inherit;border:1px solid #8a97ad;resize:vertical;box-sizing:border-box;display:block">본사 직거래 / 품절 시 대체품 OO정 안내</textarea>
    </div>
   </div>
+  <div class="r"><span class="lb" style="color:#b91c1c;font-weight:700;white-space:nowrap" title="한 회사에서 등록·해제하면 10개사 전체에 똑같이 반영">全社제약사품절</span><div class="box ln" style="padding-right:2px"><span id="sNow" style="overflow:hidden;text-overflow:ellipsis"></span><button class="x" id="sOff" style="margin-left:auto" title="제약사품절 해제">✕</button></div><span class="dp"><input type="text" id="sEtaTxt" readonly placeholder="입고예정일 ▾" style="width:112px;cursor:pointer"><span class="cal" id="cal"></span></span><input type="hidden" id="sEta"><input type="checkbox" id="sTbd" hidden><button class="btn" id="sAdd">등록</button></div>
+  <div class="err" style="margin-left:108px" id="sErr"></div>
+    <div id="hist" hidden style="display:none">  <!-- 이력 표시는 사용하지 않음 (데이터는 계속 쌓임) -->
+      <label class="hint"><input type="checkbox" id="sOld">1년 이전 포함</label>
+      <table><thead><tr><th>기록일</th><th>구분</th><th>입고예정</th><th>비고</th><th>기록자</th></tr></thead><tbody id="sBody"></tbody></table>
+    </div>
   <div class="r"><span class="lb"></span><label><input type="checkbox"> 재고관리제외(재고수량을 계산하지 않음) 체크</label></div>
   <div class="r"><span class="lb"></span><label><input type="checkbox"> 異狀재고관리제외 체크</label></div>
   <div class="r"><span class="lb"></span><label><input type="checkbox"> 로트재고 관리대상 (입출고 전수검사 대상 품목)</label></div>
@@ -143,7 +143,6 @@ $('sAdd').onclick=()=>{$('sErr').textContent='';const tbd=$('sTbd').checked,eta=
   render();};
 $('sOff').onclick=()=>{$('sErr').textContent='';if(!current())$('sErr').textContent='제약사품절 상태가 아닙니다.';else soList().push({dt:fmt(today()),tp:'해제(수동)',memo:'',by:USER});render();};
 $('inbound').onclick=()=>{if(current())soList().push({dt:fmt(today()),tp:'해제(입고)',memo:corp()+' 입고',by:'자동'});render();};
-$('sHist').onclick=()=>{const h=$('hist'),o=h.style.display==='none';h.style.display=o?'block':'none';$('sHist').textContent=o?'이력 ▴':'이력 ▾';fit();};
 $('corp').innerHTML=CORPS.map(c=>`<option>${c}</option>`).join('');
 ['corp','today','sOld'].forEach(i=>$(i).onchange=render);
 $('reset').onclick=()=>{$('today').value='2026-10-30';init();render();};
