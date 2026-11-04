@@ -146,6 +146,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
         <div class="rb">
           <span class="lg">{{p.legend}}</span>
+          <sc-if value="{{p.isStd}}" hint-placeholder-val="{{true}}"><iframe class="near-frame" src="cmp.html?v=std" title="각사 적용 현황" style="display:block;width:100%;height:30px;border:0"></iframe></sc-if>
 
           <sc-if value="{{p.showUnset}}" hint-placeholder-val="{{false}}">
             <div class="unset"><b style="font-size:14px">⚠ 반품조건을 최초 1번 입력하셔야 합니다.</b><br>아래 <b>따름</b> / <b>직접 입력</b> 중 하나를 골라 저장하세요. <span style="color:#888">(아래 미적용 칸은 표준거래처 등록된 반품조건)</span></div>
@@ -499,6 +500,7 @@ class Component extends DCLogic {
     const s = this.state;
     // 표준거래처가 반품불가면 거래처는 직접 입력 불가 (항상 표준 따름)
     const stdLock = s.std.type === 'ng';
+    if (window.stdTypeNow !== (s.std.type || '')) { window.stdTypeNow = s.std.type || ''; setTimeout(() => window.sendStd && window.sendStd()); }
     // 거래처 '미확인' : 각사 담당자가 따름/직접 입력을 한 번 골라 저장하기 전에는 표준거래처 값이 자동 적용되지 않음
     //   단, 표준이 반품가능(반품구분 선택 안 함)이면 확인 없이 바로 따름
     const custUnset = s.cust.mode === 'unset' && !!s.std.type;
@@ -590,7 +592,10 @@ class Component extends DCLogic {
 dcMount('tpl', 'app', Component);
 </script>
 <script>
+// 표준거래처 반품구분을 각사적용 띠(cmp.html?v=std)에 알려 줌
+function sendStd(){ document.querySelectorAll('iframe[src="cmp.html?v=std"]').forEach(f => f.contentWindow && f.contentWindow.postMessage({stdType: window.stdTypeNow || ''}, '*')); }
 window.addEventListener('message', e => {
+  if (e.data && e.data.needStd) { sendStd(); return; }
   if (!e.data || !e.data.nearH) return;
   document.querySelectorAll('.near-frame').forEach(f => { if (f.contentWindow === e.source) f.style.height = e.data.nearH + 'px'; });
 });

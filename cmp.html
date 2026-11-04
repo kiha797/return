@@ -26,14 +26,55 @@ body{margin:0;font:12px "Malgun Gothic",sans-serif;color:#222;background:transpa
 </div>
 <script>
 // 예시 데이터 · 현재 회사 = 중부
-const me = '중부';
-const base = {'유효기한별 공제':'임박 3개월 ~ 경과 10개월 : 30%', '상태별 공제·불가':'개봉 50% · 훼손 불가'};
-const corps = [
+let me = '중부';
+let base = {'유효기한별 공제':'임박 3개월 ~ 경과 10개월 : 30%', '상태별 공제·불가':'개봉 50% · 훼손 불가'};
+let corps = [
   ['동원약품','s'],['아이팜코리아','s'],['원주','s'],['중부','s'],['남부','d',{'유효기한별 공제':'임박 6개월 ~ 경과 6개월 : 20%'}],
   ['아산','s'],['동원아이팜','n'],['동원HC','d',{'상태별 공제·불가':'개봉 불가 · 훼손 불가'}],['의정부','s'],['제주','n']
 ];
-const strip = document.getElementById('strip'), pop = document.getElementById('pop');
 const tip = {s:'우리 회사와 같음', d:'다름 · 눌러서 다른 항목만 보기', n:'반품조건 미입력'};
+// 표준거래처 화면(?v=std): 표준과 다르게 직접 입력한 회사 + (반품불가·조건부반품일 때) 미적용 회사만 표시
+const STD = location.search.indexOf('v=std') >= 0;
+const strip = document.getElementById('strip'), pop = document.getElementById('pop');
+const TYPE = {'': '반품가능', ng: '반품불가', cond: '조건부반품'};
+// 직접 입력한 회사들 (예시) · 나머지 회사는 표준 따름 또는 미확인
+const UNSET = ['동원아이팜', '제주'];   // 아직 따름/직접 입력을 고르지 않은 회사 (예시)
+const OWN = [
+  ['중부', '조건부반품', {'유효기한별 공제':'임박 3개월 ~ 경과 10개월 : 30%'}],
+  ['남부', '반품불가', {}],
+  ['동원HC', '조건부반품', {'상태별 공제·불가':'개봉 50% · 훼손 불가'}]
+];
+function chip(cls, text, title, onclick){
+  const el = document.createElement('span');
+  el.className = 'chip ' + cls; el.textContent = text; el.title = title;
+  if (onclick) el.onclick = onclick;
+  strip.appendChild(el);
+}
+function drawStd(stdType){
+  const T = TYPE[stdType] || '반품가능';
+  strip.innerHTML = '<span class="cap">표준상이</span>'; pop.classList.remove('on');
+  me = '표준'; base = {'반품구분': T, '유효기한별 공제':'표준 값', '상태별 공제·불가':'표준 값'};
+  let diffN = 0;
+  OWN.forEach(([c, ty, det]) => {
+    if (ty === T && ty !== '조건부반품') return;                // 반품구분이 같고 세부조건 없음 → 같음, 숨김
+    if (ty === T && !Object.keys(det).length) return;
+    diffN++;
+    const diff = Object.assign(ty !== T ? {'반품구분': ty} : {}, det);
+    chip('d', '≠ ' + c + ' · ' + (ty !== T ? ty : '조건 다름'), '표준과 다름 · 눌러서 다른 항목 보기', () => show(c, diff));
+  });
+  // 반품불가·조건부반품이면 각사가 한 번 골라야 하므로 미적용 회사도 표시 (반품가능은 고를 필요 없어 숨김)
+  const unsetN = T === '반품가능' ? 0 : UNSET.length;
+  if (unsetN) UNSET.forEach(c => chip('n', '– ' + c + ' · 미적용', '아직 따름/직접 입력을 고르지 않음'));
+  const sum = document.createElement('span'); sum.className = 'cnt';
+  const same = 10 - diffN - unsetN;
+  sum.innerHTML = (diffN || unsetN) ? '다름 <b style="color:#a5560b">' + diffN + '</b>' + (unsetN ? ' · 미적용 <b style="color:#999">' + unsetN + '</b>' : '') + ' · 나머지 ' + same + '곳은 표준과 같음' : '10개사 모두 표준과 같음';
+  strip.appendChild(sum); fit();
+}
+if (STD) {
+  window.addEventListener('message', e => { if (e.data && 'stdType' in e.data) drawStd(e.data.stdType); });
+  drawStd('');
+  parent.postMessage({needStd: 1}, '*');
+} else {
 let cnt = {s:0,d:0,n:0};
 corps.forEach(([c,st,diff]) => {
   if (c !== me) cnt[st]++;
@@ -48,10 +89,11 @@ const sum = document.createElement('span');
 sum.className = 'cnt';
 sum.innerHTML = '같음 <b style="color:#1e6b34">'+cnt.s+'</b> · 다름 <b style="color:#a5560b">'+cnt.d+'</b> · 미입력 <b style="color:#999">'+cnt.n+'</b>';
 strip.appendChild(sum);
+}
 function show(c, diff){
   if (pop.dataset.c === c && pop.classList.contains('on')) { pop.classList.remove('on'); return fit(); }
   pop.dataset.c = c;
-  pop.innerHTML = '<span class="x" onclick="pop.classList.remove(\'on\');fit()">✕</span><b>'+c+'</b> · 다른 항목만 (유효기한별 공제 / 상태별 공제·불가 비교)<table><tr><th>항목</th><th>우리('+me+')</th><th>'+c+'</th></tr>' +
+  pop.innerHTML = '<span class="x" onclick="pop.classList.remove(\'on\');fit()">✕</span><b>'+c+'</b> · 다른 항목만 ('+(STD?'표준거래처와 비교':'유효기한별 공제 / 상태별 공제·불가 비교')+')<table><tr><th>항목</th><th>'+(STD?'표준':'우리('+me+')')+'</th><th>'+c+'</th></tr>' +
     Object.keys(diff).map(k => '<tr><th>'+k+'</th><td>'+base[k]+'</td><td><b>'+diff[k]+'</b></td></tr>').join('') + '</table>';
   pop.classList.add('on'); fit();
 }
