@@ -300,7 +300,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
           <div class="r wos" style="margin:6px 0 0;white-space:nowrap">
             <label class="ck" style="width:auto;margin-right:4px" title="유팜몰WOS(약사님 주문사이트)"><input type="checkbox" class="wos-ck" checked> WOS노출</label>
-            <select class="wos-rs" disabled style="width:170px"><option value="">미노출 사유 선택</option><option>유효기간 경과후 반품가능</option><option>제조번호 일치시 반품가능</option><option>일련번호 일치시 반품가능</option><option value="direct">직접 입력</option></select>
+            <select class="wos-rs" style="width:170px" title="WOS에 함께 보여줄 반품 안내"><option value="">노출 문구 선택</option><option>유효기간 경과후 반품가능</option><option>제조번호 일치시 반품가능</option><option>일련번호 일치시 반품가능</option><option value="direct">직접 입력</option></select>
             <input type="text" class="wos-tx" placeholder="사유 직접 입력" maxlength="40" style="flex:1;min-width:0;display:none">
           </div>
 
@@ -600,12 +600,12 @@ dcMount('tpl', 'app', Component);
 <script>
 // 표준거래처 반품구분을 각사적용 띠(cmp.html?v=std)에 알려 줌
 function sendStd(){ document.querySelectorAll('iframe[src="cmp.html?v=std"]').forEach(f => f.contentWindow && f.contentWindow.postMessage({stdType: window.stdTypeNow || ''}, '*')); }
-// 유팜몰WOS 노출: 체크 해제 시 사유 선택, '직접 입력'이면 옆 칸에 입력
+// 유팜몰WOS 노출: 체크(노출)일 때만 노출 문구 선택, '직접 입력'이면 옆 칸에 입력 · 미노출이면 문구 없음
 document.addEventListener('change', e => {
   const r = e.target.closest && e.target.closest('.wos'); if (!r) return;
   const ck = r.querySelector('.wos-ck'), rs = r.querySelector('.wos-rs'), tx = r.querySelector('.wos-tx');
-  rs.disabled = ck.checked; if (ck.checked) rs.value = '';
-  const on = !ck.checked && rs.value === 'direct';
+  rs.disabled = !ck.checked; if (!ck.checked) rs.value = '';
+  const on = ck.checked && rs.value === 'direct';
   tx.style.display = on ? '' : 'none'; if (!on) tx.value = '';
   if (on && e.target === rs) tx.focus();
 });
